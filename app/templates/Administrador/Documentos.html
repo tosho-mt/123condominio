@@ -1,0 +1,142 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Documentos {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Ingreso de Documnetos, Residencia : {{ conjunto.0[0]}} </h1>
+        <div class="card card-body">
+                <form method="POST" action="/addDocumentos/{{conjunto.0[1]}}-{{documento.0}}" id="reg_documento" name="reg_documento" enctype="multipart/form-data">
+                    <div class="form-group">
+                            <strong class="font-weight-bold" >Tipo Documento :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="fas fa-align-justify"></i></span>
+                                <select id="tipoDocumento" name="tipoDocumento" class="form-control selectpicker" >
+                                    <option value ="" > Seleccionar</option>
+                                    {% for tipodoc in tipodocs %}
+                                    {% if documento == "0" %}
+                                    <option value ="{{ tipodoc.0}}"> {{ tipodoc.1}}</option>
+                                    {%- elif tipodoc.0|int() == documento.0[2]|int() -%}
+                                    <option value ="{{ tipodoc.0}}" selected="true" > {{ tipodoc.1}}</option>
+                                    {% else %}
+                                    <option value ="{{ tipodoc.0}}"> {{tipodoc.1}}</option>
+                                    {% endif %}
+                                    {% endfor%}
+                                    
+                                </select>
+                              </div>  
+                    </div>
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Número Documento :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="fas fa-sort-numeric-down"></i></span>
+                                {% if documento == "0" %}
+                                <input  name="nrodoc"  placeholder="Nro. Documento" class="form-control"  type="number" >                                                              
+                                {% else %}
+                                <input  name="nrodoc" placeholder="Nro. Documento" class="form-control"  type="number" value="{{documento.0[3]}}">                              
+                                {% endif %}                                
+                              </div> 
+                    </div>
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Comentario :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="far fa-comment-alt"></i></span>
+                                {% if documento == "0" %}
+                                <input  name="comentario"  placeholder="Comentario" class="form-control"  type="text" >                                                              
+                                {% else %}
+                                <input  name="comentario" placeholder="Comentario" class="form-control"  type="text" value="{{documento.0[4]}}">                              
+                                {% endif %}                                
+                              </div> 
+                    </div>
+                    <div class="form-group">
+                              <strong class="font-weight-bold">Documento :</strong>
+                              <div class="input-group" id="imgdiv"> <span class="input-group-addon"><i class="far fa-image"></i></span>
+                                {% if documento == "0" %}
+                                <input id="doch" name="doch" type="text" class="form-control" hidden />
+                                <input type="file" id="logo" name="logo" title="seleccionar logo" accept=".docx,.doc,.pdf" />
+                                {% else %}                                
+                                <input type="file" id="logo" name="logo" title="seleccionar logo" accept=".jpg,.png"
+                                    value="{{documento.0[6]}}" filename="{{documento.0[6]}}" />
+                                <input id="doch" name="doch" type="text" class="form-control" hidden value="{{documento.0[6]}}" />                                
+                                {% endif %}
+                            </div>
+                    </div>
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Seguridad :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="fas fa-key"></i></span>
+                                {% if documento == "0" %}
+                                <input  name="seguridad" placeholder="Seguridad" class="form-control"  type="text" >                                                              
+                                {% else %}
+                                <input  name="seguridad" placeholder="Seguridad" class="form-control"  type="text" value="{{documento.0[8]}}">                              
+                                {% endif %}                                
+                              </div>                                                                                       
+                    </div>
+
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/MantDocumentos/{{conjunto.0[1]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#reg_documento').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                tipoDocumento: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingrese el Tipo Docuemnto'
+                    }
+                    }
+                },
+                nrodoc: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese el número de documento'
+                        }
+                    }
+                },
+                comentario:{
+                    validators:{
+                        notEmpty:{
+                            message: 'Por favor ingresar el comentario'
+                        }
+                    }
+                },                
+                doch:{
+                    validators:{
+                        notEmpty:{
+                            message: 'Por favor seleccionar el docuemnto'
+                        }
+                    }
+                },
+                seguridad:{
+                    validators:{
+                        notEmpty:{
+                            message: 'Por favor seleccionar tipo de seguridad'
+                        }
+                    }
+                }
+            }
+        })
+    });
+   
+
+    /* pongo la imagen en pantalla */
+    $('#doc').on('change', function(ev) {
+    var f = ev.target.files[0];
+    var fr = new FileReader();
+
+    fr.onload = function(ev2) {
+        console.dir(ev2);
+        $('#doch').attr('value', ev2.target.result);
+    };
+    
+    fr.readAsDataURL(f);
+});
+</script>
+{% endblock %}

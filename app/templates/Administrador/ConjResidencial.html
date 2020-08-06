@@ -1,0 +1,242 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Conjunto Residencial {% endblock %}
+
+{% block body %}
+<div class="container">
+        <div class="card card-body">
+                <form method="POST" action="/addConjRecidencial/{{condominio.0}}" id="reg_conjRes" name="reg_conjRes" enctype="multipart/form-data">
+                    <div class="form-group">
+                            <strong class="font-weight-bold" >Ruc :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="fas fa-key"></i></span>
+                                {% if condominio == "0" %}
+                                <input  name="ruc"  placeholder="Ruc" class="form-control"  type="text" >                                                              
+                                {% else %}
+                                <input  name="ruc" disabled placeholder="Ruc" class="form-control"  type="text" value="{{condominio.1}}">                              
+                                {% endif %}                                
+                              </div>
+                    </div>
+                    <div class="form-group">
+                            <strong class="font-weight-bold" >Nombre :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="fas fa-home"></i></span>
+                                {% if condominio == "0" %}
+                                <input  name="nombre" placeholder="Nombre" class="form-control"  type="text" >                                                              
+                                {% else %}
+                                <input  name="nombre" placeholder="Nombre" class="form-control"  type="text" value="{{condominio.2}}">                              
+                                {% endif %}                               
+                              </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <strong class="font-weight-bold">Logo :</strong>
+                                <div class="input-group" id="imgdiv"> <span class="input-group-addon"><i class="far fa-image"></i></span>
+                                    {% if condominio == "0" %}
+                                    <input id="logoh" name="logoh" type="text" class="form-control" hidden />
+                                    <input type="file" id="logo" name="logo" title="seleccionar logo" accept=".jpg,.png" />
+                                    <img id="imgLogo" name="imgLogo" src="" style="height:180px;">
+                                    {% else %}
+                                    <input type="file" id="logo" name="logo" title="seleccionar logo" accept=".jpg,.png"
+                                        value="{{condominio.7}}" filename="{{condominio.7}}" />
+                                    <input id="logoh" name="logoh" type="text" class="form-control" hidden value="{{condominio.7}}" />
+                                    <img id="imgLogo" name="imgLogo" style="height:180px;" src="/static/Doc/logos/{{condominio.7}}">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <strong class="font-weight-bold">Ubicación :</strong>
+                                <div class="input-group"> <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                    
+                                    {% if condominio == "0" %}
+                                    <input id="coords" hidden name="coords" type="text" class="form-control" />
+                                    <div class="col-md-12 col-sm-12" id="map-canvas" style="height:210px;"></div>
+                                    {% else %}
+                                    <input id="coords" hidden name="coords" type="text" class="form-control" value="({{condominio.3}},{{condominio.4}})"/>
+                                    <div class="col-md-12 col-sm-12" id="map-canvas" style="height:210px;"></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                            <strong class="font-weight-bold" >Teléfono :</strong>
+                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-phone"></i></span>                                
+                                {% if condominio == "0" %}
+                                <input  name="telefono" placeholder="Teléfono" class="form-control"  type="text">
+                                {% else %}
+                                <input  name="telefono" placeholder="Teléfono" class="form-control"  type="text" value="{{condominio.5}}">                                
+                                {% endif %} 
+                            </div>
+                    </div>                                                       
+                    <div class="form-group">
+                            <strong class="font-weight-bold" >Página Web :</strong>
+                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-cloud"></i></span>
+                                
+                                {% if condominio == "0" %}
+                                <input  name="paginaweb" placeholder="Página Web" class="form-control"  type="text">
+                                {% else %}
+                                <input  name="paginaweb" placeholder="Página Web" class="form-control"  type="text" value="{{condominio.6}}">
+                                {% endif %} 
+
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                            <button type="submit" class="btn btn-primary active">Grabar</button>
+                            <a href="/MantconjRecidencial" class="btn btn-secondary">Cancelar</a>                            
+                    </div>                                         
+                </form>
+        </div>
+
+</div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik"></script>   
+<script>
+    var map;
+    var bandera=0;
+    function initialize() {
+        var posicionactual = document.getElementById("coords").value
+        if (posicionactual) {            
+            posicionactual = posicionactual.substr(1,(posicionactual).length -2);            
+            arregloDeSubCadenas = posicionactual.split(",");
+            var latit = arregloDeSubCadenas[0];
+            var longi = arregloDeSubCadenas[1];
+            map = new google.maps.Map(document.getElementById('map-canvas'), {
+            zoom: 15,
+            /*center: { lat: latit, lng: longi }*/
+            center: new google.maps.LatLng(latit , longi )
+            });
+            var marker = new google.maps.Marker({ position: map.getCenter(),map: map,draggable: true});
+                   
+            google.maps.event.addListener(marker, 'dragend', function (event) {             
+                document.getElementById("coords").value = this.getPosition().toString();
+            });               
+        }
+        else
+        {
+        if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(fn_ok,fn_mal);
+        
+        function fn_mal(){
+            
+            map = new google.maps.Map(document.getElementById('map-canvas'), {
+            zoom: 15,
+            center: { lat: -0.19818246243391083, lng: -78.49531173706055 }
+            });
+            var marker = new google.maps.Marker({
+            position: map.getCenter(),
+            map: map,
+            draggable: true
+            });
+            //posicion default
+            //document.getElementById("coords").value = '(-0.19818246243391083,-78.49531173706055)';
+
+            google.maps.event.addListener(marker, 'dragend', function (event) {
+                document.getElementById("coords").value = this.getPosition().toString();
+            });
+        }
+        function fn_ok(rta){
+            var lati = rta.coords.latitude;
+            var logi = rta.coords.longitude;            
+            map = new google.maps.Map(document.getElementById('map-canvas'), {zoom: 15,
+             center: { lat: lati, lng: logi }
+            });
+
+            var marker = new google.maps.Marker({position: map.getCenter(),map: map,draggable: true});
+
+            google.maps.event.addListener(marker, 'dragend', function (event) {
+                document.getElementById("coords").value = this.getPosition().toString();
+            });            
+        }
+        }
+        }//fin else
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#reg_conjRes').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                ruc: {
+                    validators: {
+                        stringLength: {
+                        min: 13,
+                        max:13,
+                    },
+                        notEmpty: {
+                        message: 'Por favor ingrese el Ruc'
+                    }
+                    }
+                },
+                nombre: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese el nombre'
+                        }
+                    }
+                },
+                coords:{
+                    validators:{
+                        notEmpty:{
+                            message: 'Por favor selecionar la ubicación'
+                        }
+                    }
+                }
+                /*,
+                telefono: {
+                    validators: {
+                        stringLength: {
+                        max: 10,
+                        },
+                        notEmpty: {
+                        message: 'Por favor ingrese el teléfono'
+                        }
+                    }
+                },
+                logo:{
+                    validators:{
+                        notEmpty:{
+                            message:'Por favor escojer el logo'
+                        }
+                    }
+                },
+                paginaweb:{
+                    validators:{
+                        notEmpty:{
+                            message:'Por favor ingresar la páguina Web'
+                        }
+                    }
+
+                }*/
+
+            }
+        })
+    });
+   
+   /* pongo la imagen en pantalla */
+    $('#logo').on('change', function(ev) {
+    var f = ev.target.files[0];
+    var fr = new FileReader();
+
+    fr.onload = function(ev2) {
+        console.dir(ev2);
+        $('#imgLogo').attr('src', ev2.target.result);
+    };
+    
+    fr.readAsDataURL(f);
+
+});
+</script>
+{% endblock %}

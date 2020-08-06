@@ -1,0 +1,45 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Presupuesto {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2>Presupuesto Recidencia: {{ condominio.0[2]}}</h2>
+        </div>
+        <div class="col-md-2">
+                <img id="imgLogo" name="imgLogo" style="height:100px;" src="/static/Doc/logos/{{condominio.0[7]}}">
+        </div>
+    </div>
+    <a href="/ingPresupuesto/{{ condominio.0[0]}}" class="btn btn-success">Nuevo Presupuesto</a>
+    {% if g.TipoUsuSisfiab|int() == 5 %}
+    <a href="/MantPresupuesto" class="btn btn-success float-right">Regresar</a>
+    {% endif %}
+    <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Presupuesto</td>
+                        <td>Fecha Inicio</td>
+                        <td>Fecha Fin</td>
+                        <td>Asamblea</td>
+                        <td>Estado</td>
+
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for presupuesto in presupuestos %}
+                        <tr>
+                            <td> {{ presupuesto.0}}</td>
+                            <td> {{ presupuesto.1}}</td>
+                            <td> {{ presupuesto.2}}</td>
+                            <td> {{ presupuesto.3}}</td>
+                            <td> {{ presupuesto.4}}</td>
+                        </tr>
+                        {% endfor%}
+                   
+                </tbody>
+        </table>
+</div>
+{% endblock %}

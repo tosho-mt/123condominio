@@ -1,0 +1,47 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Necesidades {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Mantenimiento de Necesidades, Residencia : {{ residencia.0[0]}} , Etapa :{{ etapa.0[1]}} </h1>
+        <a href="/necesidad/{{ residencia.0[1]}}/{{ etapa.0[0]}}/0" class="btn btn-success">Nuevo</a>
+        <a href="/MantEtapas/{{ residencia.0[1]}}" class="btn btn-success float-right">Regresar</a>
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Tipo</td>
+                        <td>Nombre</td>
+                        <td>Descripción</td>
+                        <td>Fecha Inicia</td>
+                        <td>Fecha Ult. Mant.</td>
+                        <td>Fecha Garantia</td>
+                        <td>Precio</td>
+                        <td>Tiempo</td>
+                        <td>Nro Id provisión</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for necesidad in necesidades %}
+                    <tr>
+                        <td> {{ necesidad.3}}</td>
+                        <td> {{ necesidad.4}}</td>
+                        <td> {{ necesidad.5}}</td>
+                        <td> {{ necesidad.6}}</td>
+                        <td> {{ necesidad.7}}</td>
+                        <td> {{ necesidad.8}}</td>
+                        <td> {{ necesidad.9}}</td>
+                        <td> {{ necesidad.10}}</td>
+                        <td> {{ necesidad.11}}</td>
+                        <td>
+                            <a href="/necesidad/{{ residencia.0[1]}}/{{ etapa.0[0]}}/{{necesidad.0}}" class="btn btn-secundary">Editar</a>
+                            {% if session['TipoUsuSisfiab'] >= 3 %}
+                            <a href="/suspenderNecesidad/{{ residencia.0[1]}}/{{etapa.0[0]}}/{{necesidad.0}}" class="btn btn-secundary">Suspender</a>                            
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+        </table>
+</div>
+{% endblock %}

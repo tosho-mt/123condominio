@@ -1,0 +1,97 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Tarifas {% endblock %}
+
+{% block body %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/tarifas.css')}}"> 
+
+<div class="container">
+    <div id="pricing-table" class="clear">
+        <div class="plan1">
+                <h3>Características<span>                       
+                </span></h3>
+                <a class="signup" href="">dfd</a>         
+                <ul>
+                    {% for tarifa in tarifas %}
+                    <li>
+                        <b><div data-toggle="tooltip" title="{{tarifa.7}}">{{tarifa.1}}</div>
+                        </b>
+                    </li>	
+                    {% endfor%}	
+                </ul>
+            </div>        
+        <div class="plan">
+            {% if tarifas %}
+            <h3>Inicial<span> $ {{ tarifas.1.2 }}
+            </span></h3>
+            {% endif %}
+            <a class="signup" href="">Sign</a>         
+            <ul>
+                    {% for tarifa in tarifas %}
+                    <li><b>{{ tarifa.2 }}</b> </li>	
+                    {% endfor%}
+            </ul> 
+        </div>
+        
+        <div class="plan" id="most-popular">
+            {% if tarifas %}
+            <h3>Basico<span> $ {{ tarifas.1.3 }}
+                  
+            </span></h3>
+            {% endif %}
+            <a class="signup" href="">Sign</a>        
+            <ul>
+                    {% for tarifa in tarifas %}
+                    <li><b>{{ tarifa.3 }}</b> </li>	
+                    {% endfor%}		
+            </ul>    
+        </div>
+        <div class="plan">
+            {% if tarifas %}
+            <h3>Intermedio<span> $ {{ tarifas.1.4 }}
+            </span></h3>
+            {% endif %}
+            <a class="signup" href="">Sign</a>
+            <ul>
+                    {% for tarifa in tarifas %}
+                    <li><b>{{ tarifa.4 }}</b> </li>	
+                    {% endfor%}			
+            </ul>
+        </div>
+        <div class="plan">
+            {% if tarifas %}
+            <h3>Superior<span> $ {{ tarifas.1.5 }}
+
+            </span></h3>
+            {% endif %}
+            <a class="signup" href="">Sign</a>		
+            <ul>
+                    {% for tarifa in tarifas %}
+                    <li><b>{{ tarifa.5 }}</b> </li>	
+                    {% endfor%}			
+            </ul>
+        </div>
+        {% if g.TipoUsuSisfiab|int() == 5 %}
+        <div class="plan">
+                <h3>Mantenim.<span></span></h3>
+                <a class="signup" href="/nuevaTarifa">Nuevo</a>		
+                <ul>
+                        {% for tarifa in tarifas %}
+                        <li><b>                                
+                            <a href="/edit-tarifas">Editar</a>
+                            <a href="/elimina-tarifas/{{tarifa.0}}">Eliminar</a>
+                            </b> 
+                        </li>	
+                        {% endfor%}	
+                </ul>
+        </div>
+        {% endif %}       
+    </div> 
+</div>
+{% endblock %}
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

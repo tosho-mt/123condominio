@@ -1,0 +1,87 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Provisiones {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Ingreso Copropietarios, Residencia : {{residencia.0[2]}} Propiedad: {{propiedad.0[2]}}</h1>
+        <div class="card card-body">
+                <form method="POST" action="/addCopropietario/{{residencia.0[0]}}/{{propiedad.0[0]}}" id="reg_copropietario" name="reg_copropietario" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                        <div class="form-group">
+                        <strong class="font-weight-bold" >Seleccionar Persona :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="persona" name="persona" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                {% for persona in personas %}
+                                        {% if idPersona|int ==  persona.0|int %} 
+                                            <option value=" {{persona.0}}" selected>{{persona.1}}</option>
+                                        {% else%}
+                                            <option value=" {{persona.0}}" >{{persona.1}}</option>
+                                        {% endif %} 
+                                {% endfor %}
+                        </select>
+                        </div>                       
+                        </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                            <strong class="font-weight-bold" style="color: white;" >solo para bajar:</strong>                            
+                            
+                            <input  name="txtPath" id="txtPath" class="form-control"  type="text"  hidden value="/NuevoCopropietario/{{residencia.0[2]}}/{{propiedad.0[0]}}"></imput>
+                            <a href="/MantPersonas" class="btn btn-success">  Crear Persona</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                        <div class="form-group">
+                        <strong class="font-weight-bold" >Tipo Copropietario :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="tipocopropietario" name="tipocopropietario" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                {% for tipoCopropietario in tipoCopropietarios %}
+                                <option value ="{{ tipoCopropietario.0}}"> {{tipoCopropietario.1}}</option>
+                                {% endfor%}
+                        </select>
+                        </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                        <div class="form-group">
+                        <strong class="font-weight-bold" >Tipo Parentesco :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="tipoParentesco" name="tipoParentesco" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                {% for tipoParentesco in tipoParentescos %}
+                                <option value ="{{ tipoParentesco.0}}"> {{tipoParentesco.1}}</option>
+                                {% endfor%}
+                        </select>
+                        </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha Ingresa:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>
+                                            <input  name="fechaIni" class="form-control"  type="date" >                                                                                           
+                                        </div> 
+                                        </div>
+                        </div>
+        
+                    </div>
+
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/Copropietarios/{{residencia.0[0]}}/{{propiedad.0[0]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+
+
+{% endblock %}

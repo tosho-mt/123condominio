@@ -1,0 +1,88 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Bancos {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Ingreso de Bancos, Residencia : {{ conjunto.0[0]}} </h1>
+        <div class="card card-body">
+                <form method="POST" action="/addbanco/{{conjunto.0[1]}}/{{banco.0[0]}}" id="reg_banco" name="reg_banco" enctype="multipart/form-data" onsubmit="return validacion()">
+
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Nombre del Banco :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                                {% if banco == "0" %}
+                                <input  name="Nombre" id ="Nombre" placeholder="Nombre del Banco" class="form-control"  type="text"> 
+                                {% else %}
+                                <input  name="Nombre" id ="Nombre" placeholder="Nombre del Banco" class="form-control"  type="text" value="{{banco.0[1]}}">                                
+                                {% endif %}                                
+                              </div> 
+                    </div>
+
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Tipo de Cuenta:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                            <select id="tipoCta" name="tipoCta" class="form-control selectpicker"  >
+                                                <option value="" >Seleccionar</option>                            
+                                                {% for tipocta in tipoctas %}
+                                                {% if banco == "0" %}
+                                                <option value ="{{ tipocta.0}}" > {{ tipocta.1}} </option>
+                                                {% else %}
+                                                    {% if tipocta.0|int == banco.0[2]|int %}                                     
+                                                    <option value ="{{ tipocta.0}}" selected > {{ tipocta.1}} </option>                            
+                                                    {% else %}
+                                                    <option value ="{{ tipocta.0}}" > {{ tipocta.1}} </option>
+                                                    {% endif %} 
+                                                {% endif %}                     
+                                                {% endfor%}                         
+                                            </select>                                            
+                                        </div> 
+                                </div>
+
+
+                    <div class="form-group">
+                        <strong class="font-weight-bold" >Número de cuenta :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                          {% if banco == "0" %}
+                          <input  name="numerocta"  id="numerocta" placeholder="0" class="form-control"  type="text" >                                                              
+                          {% else %}
+                          <input  name="numerocta" id="numerocta" placeholder="0" class="form-control"  type="text" value="{{banco.0[3]}}">                              
+                          {% endif %}                                
+                        </div> 
+                    </div>                    
+
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/MantBancos/{{conjunto.0[1]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+
+<script type="text/javascript">
+
+    function validacion() {
+        descripcion = document.getElementById("descripcion").value;
+        valor = document.getElementById("valor").value;
+        porcentaje = document.getElementById("porcentaje").value;
+        
+        if ( descripcion == null || descripcion.length == 0 ){
+            alert('Por faor ingresar la descrición de la multa ');
+            return false;
+        }
+
+        if (( valor == null || valor.length == 0 || valor == 0) && (porcentaje == null || porcentaje.length == 0 || porcentaje == 0)){
+            alert('El valor y el porcentaje no pueden ser cero ');
+            return false;
+        }
+        if (( valor == null || valor.length == 0 || valor == 0) &&  porcentaje != 0){
+            alert('Ingresar el valor al que se aplicara el porcentaje ');
+            return false;
+        }
+        if (porcentaje > 100){
+            alert('El porcentaje no pueden ser mayor que cien ');
+            return false;
+        }        
+        return true;
+    }
+   
+</script>
+{% endblock %}

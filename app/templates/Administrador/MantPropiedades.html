@@ -1,0 +1,36 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Propiedades {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h3>Mantenimiento de Propiedades</h3>
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Ruc</td>
+                        <td>Nombre</td>
+                        <td>Télefono</td>
+                        <td>Web</td>
+                        <td>Logo</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for condominio in condominios %}
+                    <tr>
+                        <td> {{ condominio.1}}</td>
+                        <td> {{ condominio.2}}</td>
+                        <td> {{ condominio.5}}</td>
+                        <td> {{ condominio.6}}</td>
+                        <td> <img id="imgLogo" name="imgLogo" style="height:100px;" src="/static/Doc/logos/{{condominio.7}}"></td>
+                        <td>                            
+                            {% if session['TipoUsuSisfiab']|int() == 5 %}
+                            <a href="/Propiedades/{{condominio.0}}" class="btn btn-success">Propiedades <span class="badge badge-light" ><b>{{condominio.12}}</b></span></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+</div>
+{% endblock %}

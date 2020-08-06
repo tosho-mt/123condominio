@@ -1,0 +1,346 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Elaboración Presupuesto {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-3">
+            <h4>Elaboración Presupuesto Recidencia: {{ condominio.0[2]}}</h4>
+        </div>
+    </div>
+    <div class="card card-body">
+            <form method="POST" action="/addPresupuesto/{{condominio.0[0]}}" id="reg_ingPresupuesto" name="reg_ingPresupuesto" enctype="multipart/form-data" onsubmit="return validacion()">
+                <div class="row">
+                    <div class="col-md-4">
+                            <strong class="font-weight-bold" >Fecha Inicial:</strong>                          
+                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>
+                                <input  name="fechaInicia" id="fechaInicia" class="form-control"  type="date" >
+                                <input  name="fechaPresupuesto" id="fechaPresupuesto" type="text" hidden value="{{condominio.0[8]}}"  >
+                            </div> 
+                    </div>
+                </div>
+                <table class="table table-striped table-bordered bg-white table-sm" id="tableReg" name ='tableReg' >
+                        <thead>
+                            <tr>
+                                <td colspan="7" align="center"><strong class="font-weight-bold" >Gastos segun las Necesidades de la Residencia </strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="font-weight-bold" >Etapa</strong></td>
+                                <td><strong class="font-weight-bold" >Tipo</strong></td>
+                                <td><strong class="font-weight-bold" >Nombre</strong></td>
+                                <td><strong class="font-weight-bold" >Opción 1</strong></td>
+                                <td><strong class="font-weight-bold" >Opción 2</strong></td>
+                                <td><strong class="font-weight-bold" >Opción 3</strong></td>
+                                <td><strong class="font-weight-bold" >Aprobado</strong></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for necesidad in necesidades %}
+                                <tr>
+                                    <td hidden><input type="text"  name="N{{loop.index}}" value= {{necesidad.0}}></td>
+                                    <td hidden><input type="text"  name="E{{loop.index}}" value= {{necesidad.1}}></td>
+                                    <td hidden><input type="text"  name="Comunal{{loop.index}}" value= {{necesidad.2}}></td>
+                                    <td> {{ necesidad.2}}</td>
+                                    <td> {{ necesidad.5}}</td>
+                                    <td> {{ necesidad.6}}</td>
+                                    <td> 
+                                            <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                      <input type="radio" name="f{{loop.index}}" id="f{{loop.index}}" onclick="calcular()">
+                                                    </span>
+                                                    <input type="number" class="form-control" placeholder="0.00" name="I1{{loop.index}}" id="I1F{{loop.index}}" value=0.00>
+                                                </div>
+                                    </td>
+                                    <td> 
+                                            <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                      <input type="radio" name="f{{loop.index}}" id="f{{loop.index}}" onclick="calcular()">
+                                                    </span>
+                                                    <input type="number" class="form-control" placeholder="0.00" name="I2{{loop.index}}" id="I2F{{loop.index}}" value=0.00>
+                                                  </div>
+
+                                    </td>
+                                    <td> 
+                                            <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                      <input type="radio" name="f{{loop.index}}" id="f{{loop.index}}" onclick="calcular()">
+                                                    </span>
+                                                    <input type="number" class="form-control" placeholder="0.00" name="I3{{loop.index}}" id="I3F{{loop.index}}" value=0.00>
+                                                  </div>
+     
+                                    </td>
+                                    <td> 
+                                            <div class="input-group">
+                                                    <span class="input-group-addon">$</span>
+                                                    <input type="text" class="form-control" placeholder="0.00" name="T{{loop.index}}" id="T{{loop.index}}" value=0>                                                    
+                                            </div>
+                                    </td>                                
+                                </tr>
+                                {% endfor%}
+                                <tr>
+                                        <td colspan="6"> <strong class="font-weight-bold" >TOTAL GASTOS</strong> </td>
+                                        <td>
+                                            <div class="input-group">
+                                            <span class="input-group-addon">$</span>
+                                            <input type="text" class="form-control" placeholder="0.00" name="TG" id="TG" value="0">
+                                            </div>
+                                        </td>
+                                </tr>
+                        </tbody>
+                </table>
+
+                <table class="table table-striped table-bordered bg-white table-sm" id="tableTotal">
+                        <thead>
+                            <tr>
+                                <td colspan="4" align="center"><strong class="font-weight-bold" >Valor Alicuota por Residencia</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="font-weight-bold" >Recidencia</strong></td>
+                                <td><strong class="font-weight-bold" >Nro Recidencias</strong></td>
+                                <td><strong class="font-weight-bold" >Gasto Total</strong></td>
+                                <td><strong class="font-weight-bold text-primary" >Valor Alicuota Residencia </strong><input type="radio" name="fsel" id="fsel" value="var"></td>                            
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> {{ condominio.0[2]}}</td>
+                                <td>                        
+                                    <div class="input-group">
+                                        <span class="input-group-addon">N°</span>
+                                        <input type="text" class="form-control" placeholder="0.00" name="nroRecide" id="nroRecide" value={{ etapas | sum(4) }}>                                                    
+                                    </div>
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="gastoTotal" id="gastoTotal" >                                                    
+                                        </div>
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="valorAlicuota" id="valorAlicuota" >                                                    
+                                        </div>
+                                </td>
+                             </tr>
+                        </tbody>
+                </table>
+                <table class="table table-striped table-bordered bg-white table-sm" id="tableTotal">
+                        <thead>
+                            <tr>
+                                <td colspan="4" align="center"><strong class="font-weight-bold" >Valor Alicuota M²</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="font-weight-bold" >Recidencia</strong></td>
+                                <td><strong class="font-weight-bold" >Metros Cuadrados</strong></td>
+                                <td><strong class="font-weight-bold" >Gasto Total</strong></td>
+                                <td><strong class="font-weight-bold text-primary" >Valor Alicuota M² </strong> <input type="radio" name="fsel" id="fsel" value="vamc"></td>                            
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td> {{ condominio.0[2]}}</td>
+                                <td>  
+                                    <div class="input-group">
+                                        <span class="input-group-addon">M²</span>
+                                        <input type="text" class="form-control" placeholder="0.00" name="nrometros" id="nrometros" value={{etapas|sum(5)}}>                                                    
+                                    </div>
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="gastoTotalmc" id="gastoTotalmc" >                                                    
+                                        </div>
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="valorAlicuotamc" id="valorAlicuotamc" >                                                    
+                                        </div>
+                                </td>
+                             </tr>
+                        </tbody>
+                </table>
+                <table class="table table-striped table-bordered bg-white table-sm" id="tableEtapas">
+                        <thead>
+                            <tr>
+                                <td colspan="8" align="center"><strong class="font-weight-bold" >Valor Alicuota por Etapa</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong class="font-weight-bold" >Etapa</strong></td>
+                                <td><strong class="font-weight-bold" >Descripción</strong></td>
+                                <td><strong class="font-weight-bold" >Recidencias</strong></td>
+                                <td><strong class="font-weight-bold" >M²</strong></td>
+                                <td><strong class="font-weight-bold" >G. Etapa</strong></td>
+                                <td><strong class="font-weight-bold" >G. Comunal</strong></td>
+                                <td><strong class="font-weight-bold" >G. T. Etapa</strong></td>
+                                <td><strong class="font-weight-bold text-primary" >V. Alic. R. </strong><input type="radio" name="fsel" id="fsel" value="vare"></td>
+                                <td><strong class="font-weight-bold text-primary" >V. Alic. M² </strong><input type="radio" name="fsel" id="fsel" value="vamce"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for etapa in etapas %}
+                            {% if etapa.1 != "Comunal" %}
+                            <tr>
+                                <td hidden><input type="text"  name="EE{{loop.index}}" value= {{etapa.0}}></td>
+                                <td> {{ etapa.1}}</td>
+                                <td> {{ etapa.3}}</td>
+                                <td> 
+                                    <div class="input-group">
+                                        <span class="input-group-addon">N°</span>
+                                        <input type="text" class="form-control" placeholder="0.00" name="nRE{{loop.index}}" id="nRE{{loop.index}}" value={{etapa.4}}>                                                    
+                                    </div>
+                                </td>
+                                <td>
+                                        <div class="input-group">
+                                                <span class="input-group-addon">M²</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="nmcE{{loop.index}}" id="nmcE{{loop.index}}" value={{etapa.5}}>                                                    
+                                        </div>    
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="gE{{loop.index}}" id="gE{{loop.index}}" >                                                    
+                                        </div>                                          
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="gC{{loop.index}}" id="gC{{loop.index}}" >                                                    
+                                        </div>  
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="gTE{{loop.index}}" id="gTE{{loop.index}}" >                                                    
+                                        </div>  
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="vAliRec{{loop.index}}" id="vAliRec{{loop.index}}" >                                                    
+                                        </div>  
+                                </td>
+                                <td> 
+                                        <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input type="text" class="form-control" placeholder="0.00" name="vAliRecMc{{loop.index}}" id="vAliRecMc{{loop.index}}" >                                                    
+                                        </div> 
+                                </td>
+                            </tr>
+                            {% endif%}
+                            {% endfor%}
+                        </tbody>
+                </table>
+
+                <button type="submit" class="btn btn-primary active">Grabar</button>
+                <a href="/Presupuesto/{{condominio.0[0]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                <!-- <input type="Button" name="" value="Cambia Color" onclick="calcular()"> -->
+            </form>
+    </div>
+
+</div>
+
+<script> 
+        function calcular(){                
+               var totalG=0; 
+               var nrore =0;
+               var nromc =0;
+               var gastocomunal = 0;
+               for (var j = 1; j < tableReg.rows.length; j++) {
+                   var radios = document.getElementsByName('f'+j);
+                   for(var i = 0,length = radios.length;i<length;i++){
+                        if (radios[i].checked){
+                            document.getElementById('T'+ j).value = parseFloat(document.getElementById('I'+(i+1)+"F" + j ).value);
+                            totalG = parseFloat(totalG) + parseFloat(document.getElementById('I'+(i+1)+"F" + j ).value);
+                            if (document.getElementById("tableReg").rows[j + 1].cells[3].innerText == "Comunal")
+                                gastocomunal = gastocomunal + parseFloat(document.getElementById('I'+(i+1)+"F" + j ).value);                             
+                            
+                            break;             
+                        }                                                
+                    }
+
+                    nrore = parseFloat(document.getElementById('nroRecide').value);
+                    nromc = parseFloat(document.getElementById('nrometros').value);
+                    document.getElementById('TG').value = totalG;
+                    document.getElementById('gastoTotal').value = totalG; 
+                    document.getElementById('valorAlicuota').value = (totalG / nrore).toFixed(2); 
+                    document.getElementById('gastoTotalmc').value = totalG; 
+                    document.getElementById('valorAlicuotamc').value = (totalG / nromc).toFixed(2); 
+               }
+               // calculo el gasto por etapas
+               var gastoEtapa = 0; 
+               for (var j = 1; j <= tableEtapas.rows.length - 2; j++) {
+                   gastoEtapa = 0; 
+                //    alert(document.getElementById("tableEtapas").rows[j+1].cells[1].innerText + " " + gastocomunal)
+                   document.getElementById('gC'+ (j)).value = parseFloat(gastocomunal);
+                //  alert('pasa')
+                   for (var i = 1; i <= tableReg.rows.length - 3; i++) {  
+                        // alert ('pasa ' + document.getElementById('T'+ (i)).value)
+                       if (document.getElementById("tableEtapas").rows[j+1].cells[1].innerText == document.getElementById("tableReg").rows[i+1].cells[3].innerText ){                               
+                                gastoEtapa = parseFloat(gastoEtapa) + parseFloat(document.getElementById('T'+ (i)).value);
+                       }
+                   } 
+                //    alert(document.getElementById("tableEtapas").rows[j+1].cells[1].innerText + " " + gastoEtapa)
+                   document.getElementById('gE'+ (j )).value = parseFloat(gastoEtapa);
+                   document.getElementById('gTE'+ (j)).value = parseFloat(gastocomunal) + parseFloat(gastoEtapa);
+                   document.getElementById('vAliRec'+ (j )).value = ((gastocomunal /nrore) +  (parseFloat(document.getElementById('gE'+ (j)).value) / parseFloat(document.getElementById('nRE'+ (j)).value))).toFixed(2);
+                   document.getElementById('vAliRecMc'+ (j)).value =((gastocomunal /nromc) + (parseFloat(document.getElementById('gE'+ (j)).value) / parseFloat(document.getElementById('nmcE'+ (j)).value))).toFixed(2);
+              }                         
+        } 
+        function validacion(){
+                valor = document.getElementById("fechaInicia").value;
+                if ( valor == null || valor.length == 0 || /^\s+$/.test(valor)){
+                        alert('Por favor ingresar la fecha');
+                        return false;
+                }
+                fechapre = document.getElementById("fechaPresupuesto").value;
+                if (fechapre != 0 ){                        
+                        if(fechapre >= valor.replace(/-/g,"")){
+                                alert('La fecha selecionada tiene que ser mayor que ' + fechapre);
+                                return false;
+                        }                       
+
+                }
+                // comprobar que exista datos de recidencias y metros cuardrados 
+                for (var j = 2; j < tableEtapas.rows.length; j++) {
+                        
+                        if (document.getElementById('nRE'+ (j - 1)).value == 0){
+                                alert ("La Etapa " + document.getElementById("tableEtapas").rows[j].cells[1].innerText + " no tiene Recidencias, por favor revizar.")
+                                return false;
+                        }
+
+                        if (document.getElementById('nmcE'+ (j - 1)).value == 0){
+                                alert ("La Etapa " + document.getElementById("tableEtapas").rows[j].cells[1].innerText + " no tiene registros los M², por favor revizar.")
+                                return false;
+                        }
+                }
+                // control de ingreso de gastos
+
+                valor = document.getElementById("TG").value;
+                if (isNaN(valor) || valor == 0 ){
+                        alert('No hay Gasto Registrados');
+                        return false;     
+                }
+
+                // tipo de alicuota
+                opciones = document.getElementsByName("fsel");
+
+                var seleccionado = false;
+                for(var i=0; i<opciones.length; i++) {
+                        if(opciones[i].checked) {
+                        seleccionado = true;
+                        break;
+                        }
+                }
+
+                if(!seleccionado) {
+                        alert('Por favor seleccionar el tipo de Alicuota');
+                        return false;
+                }
+                return true;
+        }
+</script>
+{% endblock %}

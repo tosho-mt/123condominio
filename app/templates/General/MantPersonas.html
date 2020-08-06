@@ -1,0 +1,104 @@
+
+{% extends 'Inicio.html' %}
+
+{% block title %} Propiedades {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-16 col-md-offset-1">
+            <h2>Mantenimiento de Personas</h2>
+        </div>
+    </div>    
+    
+    <!-- <a href="" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-right">Regresar</a> -->
+    <!-- <a href="" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-left">Nuevo Copropietario</a> -->
+    <form method="POST" action="/MantPersonas" id="reg_BuscarPersonas" name="reg_BuscarPersonas" enctype="multipart/form-data" onsubmit="return validacion()">
+    <div class="row">
+        <div class="col-md-1.5">
+            <strong class="font-weight-bold" >Buscar Por:</strong>
+        </div>
+        <div class="col-md-2">
+                <div class="form-group">
+               
+                <select id="BuscarPor" name="BuscarPor" class="form-control selectpicker" >
+                    <option value=" " >Seleccionar</option>
+                    <option value ="1"> Cédula</option>   
+                    <option value ="2"> Apellidos</option>
+                    <option value ="3"> Nombres</option>
+                </select>
+                </div>
+        </div>
+        <div class="col-md-4">
+                <input  name="txtbuscar" id="txtbuscar" class="form-control"  type="text" >
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary active">Bucar</button>
+            
+        </div>
+        <div class="col-md-1">
+                <a href="/MantPersonas" class="btn btn-success ">Todos</a>
+        </div>
+    </div>
+    </form>
+    <a href="/Persona/0" class="btn btn-success " style="margin-bottom: 10px; margin-top: 10px;">Nueva Persona</a>
+    <div class="table-responsive-md">
+    <table class="table table-condensed table-bordered table-striped">
+                <thead >
+                    <tr>
+                        <td scope="col">Cédula</td>
+                        <td>Apellidos</td>
+                        <td>Nombres</td>
+                        <td>Fecha Nacimiento</td>                        
+                        <td>Genero</td>
+                        <td>Estado</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        {% for persona in personas %}
+                        <tr >
+                            
+                            <td> {{ persona.1}}</td>
+                            <td> {{ persona.2}}</td>
+                            <td> {{ persona.3}}</td>
+                            <td> {{ persona.4}}</td>
+                            <td> {{ persona.5}}</td> 
+                            <td> {{ persona.6}}</td>                           
+                            
+                            <td> 
+                                {% if g.TipoUsuSisfiab|int() >= 3 %}
+                                    <a href="/Persona/{{ persona.0}}" class="btn btn-success btn-sm">Editar</a>
+                                    <a href="#" class="btn btn-success btn-sm">Direcciones</a>
+                                    <a href="#" class="btn btn-success btn-sm">Contactos</a>
+                                    <a href="{{session['pathPersonas']}}/{{persona.0}}" class="btn btn-primary btn-sm">Seleccionar</a>
+                                {% endif %}
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                    
+                   
+                </tbody>
+    </table>
+    </div>
+</div>
+<script>
+    function validacion(){
+        valor = document.getElementById("BuscarPor").value;
+        if ( valor == null || valor == " " ){
+            alert('Por favor seleccionar por que desea buscar');
+            return false;
+        }
+        valor = document.getElementById("txtbuscar").value;
+
+        if ( valor == null || valor == "" ){
+            alert('Por favor ingresar lo que desea buscar');
+            return false;
+        }
+        return true;
+
+    }
+</script>
+{% endblock %}

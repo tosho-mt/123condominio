@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRqo4qwqHHrtbY9aL6vYYDw1GOhkK97MQ"></script> -->
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik"></script>   
+</head>
+<body>
+        <div class="col-md-12 col-sm-12">
+                <input type="text" style="width:400px" id="coords" />
+            <div>
+             <div class="col-md-12 col-sm-12" id="map-canvas" style="height:200px;"></div>
+    <script>
+           var map;
+function initialize() {
+   map = new google.maps.Map(document.getElementById('map-canvas'), {
+     zoom: 15,
+     center: {lat: -0.19818246243391083, lng: -78.49531173706055}
+   });
+   
+   var marker=new google.maps.Marker({
+      position:map.getCenter(), 
+      map:map, 
+      draggable:true
+   });
+			
+   google.maps.event.addListener(marker,'dragend',function(event) {
+      document.getElementById("coords").value = this.getPosition().toString();
+   });
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</body>
+</html>

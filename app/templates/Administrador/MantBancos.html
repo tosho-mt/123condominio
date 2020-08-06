@@ -1,0 +1,43 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Bancos {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Mantenimiento de Bancos, Residencia : {{ residencia.0[0]}} </h1>
+        <a href="/Bancos/{{ residencia.0[1]}}/0" class="btn btn-success">Nuevo</a>
+        <a href="/MantconjRecidencial" class="btn btn-success float-right">Regresar</a>
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>Tipo Cuenta</td>
+                        <td>Número Cuenta</td>
+                        <td>Estado</td>
+                        <td>Consiliado</td>
+                        <td>Sin Consiliar</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for banco in bancos %}
+                    <tr>
+                        <td> {{ banco.1}}</td>
+                        <td> {{ banco.8}}</td>
+                        <td> {{ banco.3}}</td>
+                        <td> {{ banco.4}}</td>
+                        <td> {{ banco.9}}</td>
+                        <td> {{ banco.10}}</td>
+                        <td>                          
+                            {% if session['TipoUsuSisfiab'] >= 3 %}
+                            {% if banco.4 != "Suspendido" and banco.1 != "CAJA CHICA" %}
+                                <a href="/Bancos/{{ residencia.0[1]}}/{{ banco.0}}" class="btn btn-secundary" >Editar</a>                            
+                                <a href="/suspenderBanco/{{banco.0}}/{{ residencia.0[1]}}" class="btn btn-secundary">Suspender</a>                           
+                            {%endif%}                           
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+        </table>
+</div>
+{% endblock %}

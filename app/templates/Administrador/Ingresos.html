@@ -1,0 +1,71 @@
+
+{% extends 'Inicio.html' %}
+
+{% block title %} Ingresos {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-9 col-md-offset-1">
+            <h2>Ingresos Recidencia: {{ condominio.0[2]}}</h2>
+        </div>
+        <div class="col-md-2">
+                <img id="imgLogo" name="imgLogo" style="height:100px;" src="/static/Doc/logos/{{condominio.0[7]}}">
+        </div>    
+    </div>    
+    <a href="/GenAlicuota/{{ condominio.0[0]}}" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-lelf">Generar Alicuota</a>
+    <a href="/GenIngresos/{{ condominio.0[0]}}" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-lelf">Generar Ingresos</a>
+    <a href="/Depositobancario/{{ condominio.0[0]}}" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-lelf">Deposito Bancario</a>
+    <a href="/CajaChica/{{ condominio.0[0]}}" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-lelf">Caja Chica</a>
+    <a href="/IngreSinIdenti/{{ condominio.0[0]}}" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-primary float-lelf">Ingresos sin Identificar <span class="badge badge-light" ><b> 1235.63</b></span></a>
+    {% if g.TipoUsuSisfiab|int() == 5 %}
+    <a href="/MantIngresos" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-right">Regresar</a>
+    {% endif %}
+
+    <table class="table table-striped table-bordered bg-white table-s">
+                <thead>
+                    <tr>
+                        <td>Etapa</td>
+                        <td>Tipo Propiedad</td>
+                        <td>Nro</td>
+                        <td>Nombre</td>
+                        <td>Responsable</td>                        
+                        <td>Ingresos</td>
+                        <td>Cobros</td>
+                        <td>Saldo</td>
+                        <td>Abonos</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        {% for propiedad in propiedades %}
+                        <tr>
+
+                            <td> {{ propiedad.0}}</td>
+                            <td> {{ propiedad.1}}</td>
+                            <td> {{ propiedad.3}}</td>
+                            <td> {{ propiedad.2}}</td>   
+                            <td> pendiente responsable </td>                          
+                            <td> ${{ propiedad.5}} </td>                          
+                            <td> ${{ '%0.2f'| format(propiedad.9|float + propiedad.11|float)}} </td>
+                            <td> ${{ '%0.2f'| format(propiedad.5|float - propiedad.9|float - propiedad.11|float)}} </td>                          
+                            <td> ${{'%0.2f'| format( propiedad.10|float - propiedad.12|float)}} </td>                          
+                                              
+                            <td> 
+                                {% if g.TipoUsuSisfiab|int() >= 3 %}
+                                    {% if propiedad.5|float - propiedad.9|float - propiedad.11|float  != 0 %}                                    
+                                        <a href="/Cobros/{{condominio.0[0]}}/{{propiedad.6}}" class="btn btn-primary btn-sm">Cobros </a>                                        
+                                    {% endif %}
+                                    <a href="/Abono/{{condominio.0[0]}}/{{propiedad.6}}" class="btn btn-success btn-sm">Abono </a>
+
+                                {% endif %}
+                            </td>                           
+                        </tr>
+                        {% endfor %}                                       
+                </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

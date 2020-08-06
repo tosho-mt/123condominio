@@ -1,0 +1,43 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Etapas {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Mantenimiento de Etapas, Residencia : {{ residencia.0[0]}} </h1>
+        <a href="/etapas/{{ residencia.0[1]}}/0" class="btn btn-success">Nuevo</a>
+        <a href="/MantconjRecidencial" class="btn btn-success float-right">Regresar</a>
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>Descripción</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for etapa in Etapas %}
+                    <tr>
+                        <td> {{ etapa.1}}</td>
+                        <td> {{ etapa.3}}</td>
+                        <td>                          
+                            {% if session['TipoUsuSisfiab'] >= 3 %}
+                            {% if etapa.1 != "Comunal" %} 
+                            <a href="/etapas/{{ residencia.0[1]}}/{{ etapa.0}}" class="btn btn-secundary">Editar</a>
+                            <a href="/suspenderEtapas/{{etapa.0}}/{{ residencia.0[1]}}" class="btn btn-secundary">Suspender</a>
+                            <a href="/MantNecesidades/{{ residencia.0[1]}}/{{etapa.0}}" class="btn btn-success">Necesidades <span class="badge badge-light" ><b>{{etapa.5}}</b></span></a>                            
+                            {% if etapa.6 > 0 %}
+                            <a href="/creaPropiedades/{{ residencia.0[1]}}/{{etapa.0}}" class="btn btn-success disabled">Propiedades <span class="badge badge-light" ><b>{{etapa.6}}</b></span></a>                            
+                            {% else %}
+                            <a href="/creaPropiedades/{{ residencia.0[1]}}/{{etapa.0}}" class="btn btn-success">Propiedades <span class="badge badge-light" ><b>{{etapa.6}}</b></span></a>                            
+                            {% endif %}
+                            {% else %}
+                            <a href="/MantNecesidades/{{ residencia.0[1]}}/{{etapa.0}}" class="btn btn-success">Necesidades <span class="badge badge-light" ><b>{{etapa.5}}</b></span></a>                            
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+        </table>
+</div>
+{% endblock %}

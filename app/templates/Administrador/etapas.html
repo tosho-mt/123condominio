@@ -1,0 +1,67 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Etapas {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Ingreso de Etapas, Residencia : {{ conjunto.0[0]}} </h1>
+        <div class="card card-body">
+                <form method="POST" action="/addEtapas/{{conjunto.0[1]}}/{{etapa.0[0]}}" id="reg_etapa" name="reg_etapa" enctype="multipart/form-data">
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Nombre Etapa :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                                {% if etapa == "0" %}
+                                <input  name="nombre"  placeholder="Nombre Etapa" class="form-control"  type="text" >                                                              
+                                {% else %}
+                                <input  name="nombre" placeholder="Nombre Etapa" class="form-control"  type="text" value="{{etapa.0[1]}}">                              
+                                {% endif %}                                
+                              </div> 
+                    </div>
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Descripción :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="far fa-comment-alt"></i></span>
+                                {% if etapa == "0" %}
+                                <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción de la Etapa"></textarea>
+                                {% else %}
+                                <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción de la Etapa" >{{etapa.0[3]}}</textarea>
+                                {% endif %}                                
+                              </div> 
+                    </div>
+
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/MantEtapas/{{conjunto.0[1]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#reg_etapa').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                nombre: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingrese el Nombre de la Etapa'
+                    }
+                    }
+                },
+                descripcion: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese la descripción de la Etapa'
+                        }
+                    }
+                },          
+            }
+        })
+    });
+   
+</script>
+{% endblock %}

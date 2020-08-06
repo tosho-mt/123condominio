@@ -1,0 +1,138 @@
+{% extends 'Inicio.html' %}
+{% block title %} Registrarse como usuario normal {% endblock %}
+{% block body %}
+
+<div class="col-md-4 offset-md-4">
+    <div class="card card-body" id="nuevoUsu">
+            <form action="/registrar" method="POST" id="reg_usu" name="reg_usu">
+                <div class="form-group">
+                        <strong class="font-weight-bold" >Nombre :</strong>
+                          <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input  name="nombre" placeholder="First Name" class="form-control"  type="text">
+                          </div>
+                </div>                         
+                <div class="form-group">
+                        <strong class="font-weight-bold" >Email :</strong>
+                        <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="email@dominio.com" >
+                        </div>                        
+                </div>
+                <div class="form-group">
+                        <strong class="font-weight-bold" >Celular :</strong>
+                        <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
+                        <input type="tel" class="form-control" pattern="[0-9]{10}" placeholder="0000000000" name="celular" onkeypress="solonumeros(event);" >
+                        </div>
+                </div>
+                <div class="form-group">
+                        <strong class="font-weight-bold" >Clave :</strong>
+                        <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                        <input type="password" class="form-control" name="clave" >
+                        </div>
+                </div>
+                <div class="form-group">
+                        <strong class="font-weight-bold" >Confirmar Clave :</strong>
+                        <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                        <input type="password" class="form-control" name="claveConfir" >
+                        </div>
+                </div>                                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+    </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#reg_usu').bootstrapValidator({
+                // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    nombre: {
+                validators: {
+                        stringLength: {
+                        min: 2,
+                    },
+                        notEmpty: {
+                        message: 'Por favor ingrese el nombre'
+                    }
+                }
+            },
+                    email: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Por favor ingrese el E-mail'
+                            },
+                            emailAddress: {
+                                message: 'Por favor ingrese E-mail correcto'
+                            }
+                        }
+                    },
+                    celular: {
+                validators: {
+                        stringLength: {
+                        max: 10,
+                    },
+                        notEmpty: {
+                        message: 'Por favor ingrese el celular'
+                    }
+                }
+            },
+            clave: {
+            validators: {
+                notEmpty: {
+                        message: 'Por favor ingrese la clave'
+                    },
+                identical: {
+                    field: 'claveConfir',
+                    message: 'La clave y la confirmación de clave deben ser iguales'
+                }
+            }
+        },
+        claveConfir: {
+            validators: {
+                notEmpty: {
+                        message: 'Por favor ingrese la confirmacion de clave'
+                    },
+                identical: {
+                    field: 'clave',
+                    message: 'La clave y la confirmación de clave deben ser iguales'
+                }
+            }
+         },
+                }
+            })
+
+
+            // .on('success.form.bv', function(e) {
+            //     $('#success_message').slideDown({ opacity: "show" }, "slow") // Do something ...
+            //         $('#reg_form').data('bootstrapValidator').resetForm();
+
+            // Prevent form submission
+            //e.preventDefault();
+
+            // Get the form instance
+            //var $form = $(e.target);
+
+            // Get the BootstrapValidator instance
+            //var bv = $form.data('bootstrapValidator');
+
+            // Use Ajax to submit form data
+            //$.post($form.attr('action'), $form.serialize(), function(result) {
+            //    console.log(result);
+            //}, 'json');
+            //});
+        });
+
+
+
+</script>       
+
+{% endblock %}
+

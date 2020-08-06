@@ -1,0 +1,35 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Nueva Tarifa {% endblock %}
+
+{% block body %}
+<form>
+    <p>esto es una prueba</p>
+    <div id="mapa" name="mapa" style="width: 700px; height:500px;" ></div>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v3"></script>
+<script type="text/javascript">
+    var divMap = document.getElementById('mapa');
+    navigator.geolocation.getCurrentPosition(fn_ok,fn_mal);
+    function fn_mal(){}
+    function fn_ok(rta){
+        var lat = rta.coords.latitude;
+        var lon = rta.coords.longitude;
+
+        var gLatLon = new google.maps.LatLng(lat, lon);
+        var objConfig = {
+            zoom: 17,
+            center: gLatLon
+        }
+        var gMapa = new google.maps.Map(divMap,objConfig);
+        var objConfMar={
+            position:gLatLon,
+            map = gMapa,
+            title: 'Ubicación actual'
+        }
+        var gMarker = new google.maps.Marker(objConfMar);
+    }
+</script>
+
+</form>
+
+{% endblock %}

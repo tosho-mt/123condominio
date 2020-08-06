@@ -1,0 +1,424 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Abonos {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h1>Abonos, Residencia : {{residencia.0[2]}}, Propiedad : {{propiedad.0[0]}}  {{propiedad.0[1]}} {{propiedad.0[2]}}</h1>
+        <form method="POST" action="/cruceAbonos/{{residencia.0[0]}}/{{propiedad.0[3]}}" id="reg_cruce" name="reg_cruce" enctype="multipart/form-data" onsubmit="return validacioncruce()">
+        <div class="card card-body">
+        <table class="table table-striped table-bordered bg-white table-sm" id="tableReg" name ='tableReg'>
+                    <thead>
+                        <tr><h4>Abonos Pendientes</h4></tr>
+                        <tr>
+                            <!-- <td></td> -->
+                            <td><strong class="font-weight-bold" >Fecha</strong></td>
+                            <td><strong class="font-weight-bold" >Forma Cobro</strong></td>
+                            <td><strong class="font-weight-bold" >Institucion</strong></td>
+                            <td><strong class="font-weight-bold" >Nro</strong></td>                        
+                            <td><strong class="font-weight-bold" >Referencia</strong></td>
+                            <td><strong class="font-weight-bold" >valor</strong></td>
+
+                        </tr>
+                    </thead>
+                    <tbody>                        
+                            {% for cobrosAbono in cobrosAbonos %}
+                            <tr>
+                                <!-- <td>
+                                      <input type="checkbox" name="ch{{loop.index}}" id="ch{{loop.index}}" onclick="calcular()">                                 
+                                </td> -->
+                                <td> {{ cobrosAbono.1}}</td>
+                                <td> {{ cobrosAbono.3}}</td>
+                                <td> {{ cobrosAbono.5}}</td>
+                                <td> {{ cobrosAbono.6}}</td>
+                                <td> {{ cobrosAbono.7}}</td> 
+                                <td name="a{{loop.index}}" id="a{{loop.index}}">$ {{ '%0.2f'| format(cobrosAbono.12|float -cobrosAbono.8|float) }}
+                                    <input type="text"  name="vAbono{{loop.index}}" value= {{ cobrosAbono.12|float -cobrosAbono.8|float }} hidden>
+                                </td>
+                                <td hidden><input type="text"  name="nc{{loop.index}}" value= {{cobrosAbono.10}}></td>
+                                <td hidden><input type="text"  name="np{{loop.index}}" value= {{cobrosAbono.9}}></td>
+                                <td hidden><input type="text"  name="c{{loop.index}}" value= {{cobrosAbono.0}}></td>
+                                
+                                                   
+                            </tr>
+                            
+                            {% if loop.last %}
+                            <tr>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td>
+                                <td> </td> 
+                                <td> </td>
+                                <td >$ {{'%0.2f'| format(valabonos)}}
+                                    <input type="text"  name="vATotal" value= {{valabonos}} hidden >
+                                </td>
+                                
+                            </tr>  
+                            {% endif %}
+                            {% endfor %}                               
+                    </tbody>
+        </table>
+        </div>
+        <button type="button" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-lelf" onclick="nuevo()">Nuevo</button>        
+        {% if cobrosAbonos and ingresos %}
+        <button type="button" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-lelf" onclick="cruce()">Cruce Abono con Ingreso</button>        
+        {% endif %}
+        <a href="/Ingresos/{{residencia.0[0]}}" style="margin-bottom: 10px; margin-top: 10px;" class="btn btn-success float-right">Regresar</a>
+        
+
+        <div class="card card-body" id="cruce" name="cruce" hidden>
+
+           
+                <table class="table table-striped table-bordered bg-white table-sm" id="tableRegIng" name ='tableRegIng'>
+                    <thead>
+                        <tr><h4>Cobros Pendientes</h4></tr>
+                        <tr>
+                            <!-- <td></td> -->
+                            <td><strong class="font-weight-bold" >Fecha</strong></td>
+                            <td><strong class="font-weight-bold" >Valor</strong></td>
+                            <td><strong class="font-weight-bold" >Tipo</strong></td>                        
+                            <td><strong class="font-weight-bold" >Sub Tipo</strong></td>
+                            <td><strong class="font-weight-bold" >Descripción</strong></td>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for ingreso in ingresos %}
+                            <tr>
+                                <!-- <td>
+                                      <input type="checkbox" name="ch{{loop.index}}" id="ch{{loop.index}}" onclick="calcular()">                                 
+                                </td> -->
+                                <td> {{ ingreso.6}}</td>
+                                <td name="v{{loop.index}}" id="v{{loop.index}}">$ {{ ingreso.7|float - ingreso.14|float }}  
+                                    <input type="text"  name="vcobro{{loop.index}}" value= {{ ingreso.7|float - ingreso.14|float}} hidden >
+                                </td>
+                                <td> {{ ingreso.9}}</td>
+                                <td> {{ ingreso.11}}</td> 
+                                <td> {{ ingreso.10}}</td>
+                                <td hidden><input type="text"  name="I{{loop.index}}" value= {{ingreso.0}}></td>
+                                <td hidden><input type="text"  name="NP{{loop.index}}" value= {{ingreso.13}}></td>                                                   
+                            </tr>
+                      
+                            {% if loop.last %}
+                            <tr>
+                                <td> </td>
+                                <td>$ {{valcobro}}
+                                    <input type="text"  name="vITotal" value= {{valcobro}} hidden >
+                                </td>
+                                <td> </td>
+                                <td> </td> 
+                                <td> </td>
+                                <td hidden></td>
+                                <td hidden></td>
+                            </tr>  
+                            {% endif %}
+                            {% endfor %} 
+                             
+                    </tbody>
+                </table>  
+
+                <div class="row">
+                    <button type="submit" class="btn btn-primary active">Grabar</button>                                    
+                    <a href="#" class="btn btn-secondary" onclick="cancelcruce()">Cancelar</a>                                                                  
+                </div>
+            
+        </div> 
+    </form>
+        <div class="card card-body" id="nuevo" name="nuevo" hidden>
+            <form method="POST" action="/addAbonos/{{residencia.0[0]}}/{{propiedad.0[3]}}" id="reg_genAbonos" name="reg_genAbonos" enctype="multipart/form-data" onsubmit="return validacion()">
+           
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Total Cobros:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon">$</span>                                            
+                                            <input type="text" name="valor" id="valor" class="form-control font-weight-bold" value="0"> 
+                                        </div> 
+                                </div>
+                        </div>        
+                 
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha pago:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>                                            
+                                            <input type="date" name="fecha" id="fecha" class="form-control" >                                                                                                                                 
+
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>                    
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Froma de Pago:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                            <select id="tipocobro" name="tipocobro" class="form-control selectpicker"  >
+                                                <option value="" >Seleccionar</option>                            
+                                                {% for tipoCobro in tipoCobros %}
+                                               
+                                                <option value ="{{ tipoCobro.0}}" > {{ tipoCobro.1}} </option>
+                    
+                                                {% endfor%}                         
+                                            </select>                                                                                                                               
+
+                                        </div> 
+                                </div>
+                        </div> 
+                        <div class="col-md-3" name="divinstitucion" id="divinstitucion" hidden>
+                            <div class="form-group">
+                                    <strong class="font-weight-bold" >Institución:</strong>                          
+                                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                        <select id="institucion" name="institucion" class="form-control selectpicker"  >
+                                            <option value="" >Seleccionar</option>                            
+                                            {% for institucion in instituciones %}                                           
+                                                <option value ="{{ institucion.0}}" > {{ institucion.1}} </option>
+                                            {% endfor%}                         
+                                        </select>                                                                                                                               
+                                    </div> 
+                            </div>
+                        </div>
+                        <div class="col-md-3" name="divbanco" id="divbanco" hidden>
+                            <div class="form-group">
+                                    <strong class="font-weight-bold" >banco:</strong>                          
+                                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                        <select id="banco" name="banco" class="form-control selectpicker"  >
+                                            <option value="" >Seleccionar</option>                            
+                                            {% for banco in bancos %}                                           
+                                                <option value ="{{ banco.0}}" > {{ banco.1}} - {{ banco.2}} </option>
+                                            {% endfor%}                         
+                                        </select>                                                                                                                               
+                                    </div> 
+                            </div>
+                        </div>
+                        <div class="col-md-3" name="divnrodoc" id="divnrodoc" hidden>
+                            <div class="form-group">
+                                    <strong class="font-weight-bold" >Nro. Documento:</strong>                          
+                                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>                                            
+
+                                        <input type="text" name="nrodoc" id="nrodoc" class="form-control font-weight-bold" value=""  > 
+                                    </div> 
+                            </div>
+                        </div>   
+                        <div class="col-md-3" name="divnrodeposito" id="divnrodeposito" hidden>
+                            <div class="form-group">
+                                    <strong class="font-weight-bold" >Nro. Deposito o Transferencia:</strong>                          
+                                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>                                            
+                                        <input type="text" name="nrodeposito" id="nrodeposito" class="form-control font-weight-bold" value=""  > 
+                                    </div> 
+                            </div>
+                        </div>                              
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Referencia:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="far fa-comment-alt"></i></span>                                            
+                                            <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción del Abono"></textarea>
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>                    
+                    <button type="submit" class="btn btn-primary active">Grabar</button>                     
+                    <a href="#" class="btn btn-secondary" onclick="cancelnuevo()">Cancelar</a>                                                                  
+            </form>
+        </div>
+
+               
+</div>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+
+    $("#tipocobro").change(function(){
+        $.ajax({
+
+            type: 'GET',
+            success: function() {
+
+                var valorselec =document.getElementById("tipocobro").value;
+                
+                document.getElementById("divnrodoc").hidden = true;
+                document.getElementById("divinstitucion").hidden = true;
+                document.getElementById("divbanco").hidden = true;
+                document.getElementById("divnrodeposito").hidden = true;
+                
+                // cheque
+                if (valorselec == 2 ){
+                    document.getElementById("divnrodoc").hidden = false;
+                    document.getElementById("divinstitucion").hidden = false;
+                }
+                // transferencia
+                if (valorselec == 3){
+                    document.getElementById("divnrodoc").hidden = false;
+                    document.getElementById("divbanco").hidden = false;
+                    document.getElementById("divnrodeposito").hidden = false;
+                }
+                // deposito 
+                if (valorselec == 5){
+                    document.getElementById("divbanco").hidden = false;
+                    document.getElementById("divnrodeposito").hidden = false;
+                } 
+                                  
+	        },
+        });
+    });
+
+    
+    function cruce(){
+        document.getElementById('cruce').hidden = false;
+        document.getElementById('nuevo').hidden = true;
+    }
+    function cancelcruce(){
+        document.getElementById('cruce').hidden = true;
+    }    
+    function cancelnuevo(){
+        document.getElementById('nuevo').hidden = true;
+    }
+    function nuevo(){
+        document.getElementById('nuevo').hidden = false;
+        document.getElementById('cruce').hidden = true;
+    }
+
+    // function calcular(){   
+    //             var valAbono = 0;
+    //             for (var j = 1; j < tableReg.rows.length - 1; j++) {
+    //                 valAbono = valAbono + parseFloat(document.getElementById('a'+ (j)).innerHTML);
+    //             }
+    //             var val = 0;
+    //             var numscojidos = 0
+    //             document.getElementById('valorIng').value = 0;
+    //             for (var j = 1; j < tableRegIng.rows.length - 1; j++) {
+    //                 var ddd = document.getElementById('ch'+j).checked;
+
+    //                 if (ddd == true){
+    //                     numscojidos = numscojidos + 1;
+                        
+                        
+    //                     if (valAbono < val && numscojidos > 1){                            
+    //                         val = val - parseFloat(document.getElementById('v'+ (j)).innerHTML);
+    //                         document.getElementById('ch'+j).checked = false;
+    //                         alert("El valor de cobros seleccionados no puede ser mayor que el valor de abonos");                                               
+    //                     }
+    //                     val = val + parseFloat(document.getElementById('v'+ (j)).innerHTML);
+    //                     document.getElementById('valorIng').value = val;
+    //                 }     
+    //            }
+    //     } 
+   
+    function soloNumeros(e){
+        var key = window.Event ? e.which : e.keyCode;
+        return ((key >= 48 && key <= 57) || (key==8) || (key==46));
+    }
+    function cobros(){
+        var val = 0;
+        document.getElementById('valor').value = 0;
+        for (var j = 1; j < tableReg.rows.length; j++) {
+            cobro = document.getElementById('c'+(j)).value;            
+            valor = parseFloat(document.getElementById('v'+ (j)).innerHTML);
+            if (cobro > valor){
+                alert("El cobro de " +cobro + " no puede ser mayor que el valor " + valor);
+                document.getElementById('c'+(j)).value = 0;
+                // break;
+            } 
+            // alert(document.getElementById('c'+ (j)).value);
+            val = val + parseFloat(document.getElementById('c'+ (j)).value);
+            document.getElementById('valor').value = val;         
+        }
+    }
+    function validacioncruce(){
+        valorIng = document.getElementById("valorIng").value;
+        if(valorIng == null || valorIng.length == 0 ||valorIng == 0 ){
+            alert('Por favor seleccionar el cobro');
+            return false;
+        } 
+
+        return true;
+
+    }
+
+    function validacion() {
+        valor = document.getElementById("valor").value;
+        if(valor == null || valor.length == 0 ||valor == 0 ){
+            alert('Por favor ingresar el valor');
+            return false;
+        } 
+        fecha = document.getElementById("fecha").value;
+        if ( fecha == null || fecha.length == 0 ){
+            alert('Por favor seleccionar la fecha');
+            return false;
+        }
+
+        tipocobro = document.getElementById("tipocobro").value;
+        if(tipocobro == null || tipocobro.length == 0  ){
+            alert('Por favor seleccionar la forma de pago');
+            return false;
+        }
+
+        // efectivo 1          
+        // tarjeta 4 
+        // consiliacion 6
+        // adelanto 7
+        // descuento 8
+
+        // cheque 2
+        if(tipocobro == 2){
+            institucion = document.getElementById("institucion").value;
+            if(institucion == null || institucion.length == 0  ){
+                alert('Por favor seleccionar la Institucion');
+                return false;
+            }
+            nrodoc = document.getElementById("nrodoc").value;
+            if(nrodoc == null || nrodoc.length == 0 ||nrodoc == "" ){
+                alert('Por favor ingresar el Nro. documento');
+                return false;
+            }
+        }
+        // transferencia 3 
+        if(tipocobro == 3 ){
+            banco = document.getElementById("banco").value;
+            if(banco == null || banco.length == 0  ){
+                alert('Por favor seleccionar el Banco');
+                return false;
+            }
+            nrodoc = document.getElementById("nrodoc").value;
+            if(nrodoc == null || nrodoc.length == 0 ||nrodoc == "" ){
+                alert('Por favor ingresar el Nro. documento');
+                return false;
+            }
+            nrodeposito = document.getElementById("nrodeposito").value;
+            if(nrodeposito == null || nrodeposito.length == 0 ||nrodeposito == "" ){
+                alert('Por favor ingresar el Nro. de Deposito o Transferencia');
+                return false;
+            }            
+        }
+        // deposito 5
+        if(tipocobro == 5){
+            banco = document.getElementById("banco").value;
+            if(banco == null || banco.length == 0  ){
+                alert('Por favor seleccionar el Banco');
+                return false;
+            }
+            nrodeposito = document.getElementById("nrodeposito").value;
+            if(nrodeposito == null || nrodeposito.length == 0 ||nrodeposito == "" ){
+                alert('Por favor ingresar el Nro. de Deposito o Transferencia');
+                return false;
+            }            
+        }        
+         
+        descripcion = document.getElementById("descripcion").value;
+        if(descripcion == null || descripcion.length == 0 || descripcion == ""  ){
+            alert('Por favor ingresar la referencia');
+            return false;
+        }
+        for (var j = 1; j < tableReg.rows.length; j++) {
+            cobro = document.getElementById('c'+(j)).value;
+            valor = parseFloat(document.getElementById('v'+ (j)).innerHTML);
+            if (cobro > valor){
+                alert("El cobro de " +cobro + " no puede ser mayor que el valor " + valor);
+                document.getElementById('c'+(j)).value = 0;
+                return false;
+            }            
+        }
+        return true;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Provisiones {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Ingreso de las Necesidades, Residencia : {{ residensia.0[0]}} , Etapa : {{ etapa.0[1]}}</h1>
+        <div class="card card-body">
+                <form method="POST" action="/addNecesidad/{{residensia.0[1]}}/{{etapa.0[0]}}/{{necesidad.0[0]}}" id="reg_necesidad" name="reg_necesidad" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-4">
+                        <div class="form-group">
+                        <strong class="font-weight-bold" >Tipo Provisión :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="tiponecesidad" name="tiponecesidad" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                {% for tipo in tipos %}
+                                {% if necesidad == "0" %}
+                                <option value ="{{ tipo.0}}"> {{ tipo.1}}</option>
+                                {%- elif tipo.0|int() == necesidad.0[3]|int() -%}
+                                <option value ="{{ tipo.0}}" selected="true" > {{ tipo.1}}</option>
+                                {% else %}
+                                <option value ="{{ tipo.0}}"> {{tipo.1}}</option>
+                                {% endif %}
+                                {% endfor%}
+                        </select>
+                    </div>
+                        </div>
+                        </div>
+                        <div class="col-md-8"> 
+                            <div class="form-group">
+                            <strong class="font-weight-bold" >Nombre Provisión:</strong>                          
+                            <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                                {% if necesidad == "0" %}
+                                <input  name="nombre"  placeholder="Nombre Necesidad" class="form-control"  type="text" >                                                              
+                                {% else %}
+                                <input  name="nombre" placeholder="Nombre Necesidad" class="form-control"  type="text" value="{{necesidad.0[4]}}">                              
+                                {% endif %}                                
+                            </div> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                              <strong class="font-weight-bold" >Descripción :</strong>
+                              <div class="input-group"> <span class="input-group-addon"><i class="far fa-comment-alt"></i></span>
+                                {% if necesidad == "0" %}
+                                <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción de la Necesidad"></textarea>
+                                {% else %}
+                                <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción de la Necesidad" >{{necesidad.0[5]}}</textarea>
+                                {% endif %}                                
+                              </div> 
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha Inicia Necesidad:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>
+                                            {% if necesidad == "0" %}
+                                            <input  name="fechaIni" class="form-control"  type="date" >                                                              
+                                            {% else %}
+                                            <input  name="fechaIni" class="form-control"  type="date" value="{{necesidad.0[6]}}">                              
+                                            {% endif %}                                
+                                        </div> 
+                                        </div>
+                        </div>
+                        <div class="col-md-4">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha Ultimo Mantenimiento Necesidad:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>
+                                            {% if necesidad == "0" %}
+                                            <input  name="fechaUltMant" class="form-control"  type="date" >                                                              
+                                            {% else %}
+                                            <input  name="fechaUltMant" class="form-control"  type="date" value="{{necesidad.0[7]}}">                              
+                                            {% endif %}                                
+                                        </div> 
+                                        </div>
+                        </div>
+                        <div class="col-md-4">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha Garantía:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>
+                                            {% if necesidad == "0" %}
+                                            <input  name="fechaGarantia" class="form-control"  type="date" >                                                              
+                                            {% else %}
+                                            <input  name="fechaGarantia" class="form-control"  type="date" value="{{necesidad.0[8]}}">                              
+                                            {% endif %}                                
+                                        </div> 
+                                        </div>
+                        </div>        
+                    </div>
+                    <div class="row">
+                            <div class="col-md-4">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Precio de la Necesidad:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-dollar-sign"></i></span>
+                                                {% if necesidad == "0" %}
+                                                <input  name="precio"  placeholder="Valor que representa la Necesidad" class="form-control"  type="number">                                                              
+                                                {% else %}
+                                                <input  name="precio" placeholder="Valor que representa la Necesidad" class="form-control"  type="number" value="{{necesidad.0[9]}}">                              
+                                                {% endif %}                                
+                                            </div> 
+                                    </div>
+                            </div>
+                            <div class="col-md-4">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Tiempo entre Mantenimientos, en días:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-sort-numeric-down"></i></span>
+                                                {% if necesidad == "0" %}
+                                                <input  name="tiempo"  placeholder="Tiempo entre mantenimientos" class="form-control"  type="number" min="0" max="365">                                                              
+                                                {% else %}
+                                                <input  name="tiempo" placeholder="Tiempo entre mantenimientos" class="form-control"  type="number" min="0" max="365" value="{{necesidad.0[10]}}">                              
+                                                {% endif %}                                
+                                            </div> 
+                                            </div>
+                            </div>
+                            <div class="col-md-4">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Nro. id. Necesidad:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-audio-description"></i></span>
+                                                {% if necesidad == "0" %}
+                                                <input  name="nroNecesidad"  placeholder="Numero identifica la Necesidad" class="form-control"  type="text" >                                                              
+                                                {% else %}
+                                                <input  name="nroNecesidad" placeholder="Numero identifica la Necesidad" class="form-control"  type="text" value="{{necesidad.0[11]}}">                              
+                                                {% endif %}                                
+                                            </div> 
+                                            </div>
+                            </div>        
+                        </div>
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/MantNecesidades/{{residensia.0[1]}}/{{ etapa.0[0]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#reg_necesidad').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                tiponecesidad: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor seleccionar el tipo de Necesidad'
+                    }
+                    }
+                },
+                nombre: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingrese el Nombre de la Necesidad'
+                    }
+                    }
+                },
+                descripcion: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese la descripción de la Necesidad'
+                        }
+                    }
+                }, 
+                fechaIni: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor escojer la fecha inicio'
+                        }
+                    }
+                }, 
+                fechaUltMant: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor escojer la fecha último Mantenimiento'
+                        }
+                    }
+                },   
+                fechaGarantia: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor escojer la fecha de la Garantía'
+                        }
+                    }
+                },
+                precio: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese el precio de la Necesidad'
+                        }
+                    }
+                }, 
+                tiempo: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese el tiempo entre mantenumientos en días'
+                        }
+                    }
+                }, 
+                nroNecesidad: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor ingrese el Nro que identifica la Necesidad'
+                        }
+                    }
+                },                                                 
+            }
+        })
+    });
+   
+
+
+</script>
+{% endblock %}

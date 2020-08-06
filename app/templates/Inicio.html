@@ -1,0 +1,200 @@
+{% from "macros.html" import render_mensage %}
+<!DOCTYPE html Page MaintainScrollPositionOnPostback="true" >
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- generar el icono y poner en la direccion de abajo -->
+    <link rel="shortcut icon" href="../static/img/favicon.ico"/>
+    <!-- basico para que una paguina sea respons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0",user-scalable=no, maximum-scale=1.0,minimum-scale=1.0>
+    <!-- Compatibilidad -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>123Residencias - {% block title %} {% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.5.3/css/bootstrapValidator.min.css" rel="stylesheet"/>
+    <link href="https://bootswatch.com/4/materia/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css')}}">
+
+    <!-- aumento de controles
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/css.cs')}}">
+
+    <link rel="stylesheet" href="httpwwws://fonts.googleapis.com/css?family=Oswald">  -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-theme.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css')}}">
+    
+
+</head>
+<body onLoad ="setVScroll();">
+        <header id="header">
+            <div id="DivLogo">
+                <img src="{{ url_for('static',filename='img/logosisfia1.jpg')}}" alt="logotipoMT" class="logo">
+            </div>
+            <div class="toggle-btn">
+                    <span>&#9776;</span>
+            </div>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link active" href="/tarifas"><i class="fas fa-dollar-sign"></i> Tarifas</a>
+                </li>                
+                  {% if session['nameSisfiab'] %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-user-times"></i> Logout {{session['nameSisfiab']}}</a>
+                </li>
+                  {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/login"> <i class="far fa-user"></i> Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/registrar"><i class="far fa-list-alt"></i> Register</a>
+                </li>
+                  {% endif %}
+            </ul>
+        </header>
+        
+        <div id="sidebar">
+            <!--<nav> -->
+            <!--<a href="#" class="btn-menu">Menu<i class="icono fa fa-bars"></i></a>-->
+            <ul class="menu">
+                <li class="menu-t">
+                    <span >MENU</span>
+                </li>
+                <li>
+                    <a href="#" >
+                        <i class="icono izquierda fa fa-tachometer-alt"></i>
+                         Tablero
+                        <i class="icono derecha fa fa-chevron-down"></i>
+                    </a>
+                    <ul >
+                        <li><a href="#">Usuario</a></li>
+                        <li><a href="#">Dashboard v2</a></li>
+                    </ul>
+                </li>
+                {% if session['TipoUsuSisfiab'] == 4 or session['TipoUsuSisfiab'] == 5 %}
+                <li>
+                    <a href="#" >
+                        <i class="icono izquierda fas fa-street-view"></i>
+                        Directorio
+                        <i class="icono derecha fa fa-chevron-down"></i>
+                    </a>
+                    <ul >
+                        <li><a href="/MantPresupuesto">Presupuesto</a></li>
+                        <li><a href="#">Dashboard v2</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                {% if session['TipoUsuSisfiab'] == 3 or session['TipoUsuSisfiab'] == 4 or session['TipoUsuSisfiab'] == 5 %}
+                <li>
+                        <a href="#" >
+                            <i class="icono izquierda fas fa-user-plus"></i>
+                            Administrador
+                            <i class="icono derecha fa fa-chevron-down"></i>
+                        </a>
+                        <ul >
+                            <li><a href="/MantconjRecidencial">Conjunto Residencial</a></li>
+                            <li><a href="/MantPropiedades">Mant. Propiedades</a></li>
+                            <li><a href="/MantIngresos">Mant. Ingresos</a></li>
+                        </ul>
+                </li>
+                {% endif %}
+                {% if session['TipoUsuSisfiab'] == 2 or session['TipoUsuSisfiab'] == 3 or session['TipoUsuSisfiab'] == 4 or session['TipoUsuSisfiab'] == 5 %}
+                <li>
+                        <a href="#" >
+                            <i class="icono izquierda fas fa-user"></i>
+                            Residente
+                            <i class="icono derecha fa fa-chevron-down"></i>
+                        </a>
+                        <ul >
+                            <li><a href="/usuario">Usuario</a></li>
+                            <li><a href="#">Dashboard v2</a></li>
+                        </ul>
+                </li>
+                {% endif %}
+                {% if session['TipoUsuSisfiab'] == 5 %}                
+                <li>
+                        <a href="#" >
+                            <i class="icono izquierda fas fa-lock"></i>
+                            Seguridades
+                            <i class="icono derecha fa fa-chevron-down"></i>
+                        </a>
+                        <ul >
+                            <li><a href="/usuario">Usuario</a></li>
+                            <li><a href="#">Dashboard v2</a></li>
+                        </ul>
+                </li> 
+                {% endif %}                                            
+                <li>
+                    <a href="/usuario" >
+                        <i class="icono izquierda fas fa-envelope"></i>                           
+                        Contactos                            
+                    </a>  
+                </li>              
+        
+
+            </ul>            
+           <!-- </nav> -->
+        </div>
+        
+       <!-- <main>-->
+            <div id="main" onScroll="getVScroll();">
+                <input name="posicionx" type="hidden" id="posicionx"  />
+                <input name="posiciony" type="hidden" id="posiciony"  />
+                {{render_mensage(messages)}}               
+                {% block body %}
+                {% endblock %}
+            </div> 
+        <!--</main>-->
+
+        <footer id="footer">
+            <p> SisFiab&copy; 2019</p>
+        </footer>
+
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+        <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>            
+
+        <!-- aumeto de validador -->
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> 
+          <!-- validador -->
+          <script src="{{ url_for('static',filename='js/jquery.min.js')}}" charset="utf-8"></script>
+          <script src="{{ url_for('static',filename='js/bootstrap.min.js')}}" charset="utf-8"></script>
+
+        <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+        <script src='http://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js'></script>
+
+        <!-- librerias propias al final-->
+        <script src="{{ url_for('static',filename='js/pregunta.js')}}" charset="utf-8"></script>
+        <script src="{{ url_for('static',filename='js/menu.js')}}" charset="utf-8"></script>
+
+
+    <script type="text/javascript">  
+       
+            function getVScroll() {
+            // leeo la posicion del scroll del div principal y le guardo en seccion, funcion en load del body
+               sessionStorage.setItem("scrollv",  document.getElementById('main').scrollTop);
+        
+            }
+    
+            function setVScroll() { 
+                // recupero lo de la seccion y asigno al scroll del div principal, funcion en div
+               document.getElementById('main').scrollTop = sessionStorage.getItem("scrollv");
+            } 
+   
+    </script>
+
+</body>
+</html>

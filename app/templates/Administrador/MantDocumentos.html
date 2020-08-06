@@ -1,0 +1,41 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Documentos {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Mantenimiento de Documnetos, Residencia : {{ residencia.0[0]}} </h1>
+        <a href="/documentos/{{ residencia.0[1]}}-0" class="btn btn-success">Nuevo</a>
+        <a href="/MantconjRecidencial" class="btn btn-success float-right">Regresar</a>
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Tipo Documento</td>
+                        <td>Nro.</td>
+                        <td>Comentario</td>
+                        <td>Fecha</td>
+                        <td>Docuemnto</td>
+                        <td>Seguridad</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for documento in documentos %}
+                    <tr>
+                        <td> {{ documento.11}}</td>
+                        <td> {{ documento.3}}</td>
+                        <td> {{ documento.4}}</td>
+                        <td> {{ documento.5}}</td>
+                        <td> {{ documento.6}}</td>
+                        <td> {{ documento.8}}</td>
+                        <td>
+                            <a href="/documentos/{{ residencia.0[1]}}-{{documento.0}}" class="btn btn-secundary">Editar</a>
+                            {% if session['TipoUsuSisfiab'] == 'Rot' %}
+                            <a href="/suspenderDocumento/{{documento.0}}" class="btn btn-secundary">Suspender</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+        </table>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Crear Propiedades {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Creación de Propiedades Residencia : {{ residensia.0[0]}} , Etapa : {{ etapa.0[1]}}</h1>
+        <div class="card card-body">
+                <form method="POST" action="/addPropiedad/{{residensia.0[1]}}/{{etapa.0[0]}}" id="reg_creaPropiedades" name="reg_creaPropiedades" enctype="multipart/form-data">
+
+                        <div class="form-group">
+                        <strong class="font-weight-bold" >Tipo Propiedad :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="tipoPropiedad" name="tipoPropiedad" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                {% for tipo in tipos %}                             
+                                <option value ="{{ tipo.0}}"> {{ tipo.1}}</option>                            
+                                {% endfor%}
+                        </select>
+                    </div>
+                        </div>
+                        <div class="form-group">
+                                <strong class="font-weight-bold" >Número de Propiedades:</strong>                          
+                                <div class="input-group"> <span class="input-group-addon"><i class="fas fa-sort-numeric-down"></i></span>
+                                         <input  name="NroPropiedades"  placeholder="Número de Propiedades" class="form-control"  type="number" min="0">                                                              
+                           
+                            </div> 
+                        </div>
+
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/MantEtapas/{{residensia.0[1]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#reg_creaPropiedades').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                tipoPropiedad: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor seleccionar el tipo de Propiedad'
+                    }
+                    }
+                },
+                NroPropiedades: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingrese el Número de propiedades de la Etapa'
+                    }
+                    }
+                },
+            }
+        })
+    });
+   
+
+
+</script>
+{% endblock %}

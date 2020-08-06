@@ -1,0 +1,225 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Personas {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h2>Ingreso Personas</h1>
+        <div class="col-md-5">
+        <div class="card card-body">
+                <form method="POST" action="/addPersonas/{{persona.0[0]}}" id="reg_Personas" name="reg_Personas" enctype="multipart/form-data">
+                    <div class="row">
+                            <div class="col-md-6">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Cédula:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-user"></i></span>
+                                                {% if persona == "0" %}
+                                                    <input  name="cedula" id="cedula" placeholder="Cédula" class="form-control"  type="text"  onkeypress="solonumeros(event);" onkeyup="validacedula();" autofocus>                                                                                           
+                                                {% else %}
+                                                    <input disabled name="cedula" placeholder="Cédula" class="form-control"  type="text" value="{{persona.0[1]}}"  >                                                                               
+                                                {% endif %}                                                  
+                                            </div> 
+                                            </div>
+                            </div>
+            
+                    </div>
+                    <div class="row">
+                            <div class="col-md-10">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Apellidos:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-user"></i></span>
+                                                {% if persona == "0" %}
+                                                    <input  name="apellidos"  placeholder="Apellidos" class="form-control"  type="text" onBlur  ="this.value = this.value.toUpperCase()">
+                                                {% else %}
+                                                    <input  name="apellidos"  placeholder="Apellidos" class="form-control"  type="text" value="{{persona.0[2]}}" onBlur  ="this.value = this.value.toUpperCase()">                                                    
+                                                {% endif %}                                                                                                                                           
+                                            </div> 
+                                            </div>
+                            </div>
+            
+                    </div>
+                    <div class="row">
+                            <div class="col-md-10">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Nombres:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-user"></i></span>
+                                                
+                                                {% if persona == "0" %}
+                                                    <input  name="nombres" id="nombres" placeholder="Nombres" class="form-control"  type="text" onBlur  ="this.value = this.value.toUpperCase()">
+                                                {% else %}
+                                                    <input  name="nombres" placeholder="Nombres" class="form-control"  type="text" value="{{persona.0[3]}}" onBlur  ="this.value = this.value.toUpperCase()">
+                                                {% endif %}                                                                                             
+                                            </div> 
+                                            </div>
+                            </div>
+            
+                    </div>
+                    <div class="row">
+                            <div class="col-md-5">
+                                    <div class="form-group">
+                                            <strong class="font-weight-bold" >Fecha Nacimiento:</strong>                          
+                                            <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>
+                                                {% if persona == "0" %}
+                                                    <input  name="fechaNacimiento" class="form-control"  type="date" >                                                                                           
+                                                {% else %}
+                                                    <input  name="fechaNacimiento" class="form-control"  type="date" value="{{persona.0[4]}}" >                                                     
+                                                {% endif %} 
+                                                
+                                            </div> 
+                                            </div>
+                            </div>
+            
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                        <div class="form-group">
+                        <strong class="font-weight-bold" >Genero :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="tipoGenero" name="tipoGenero" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                {% if persona == "0" %}
+                                    <option value ="1">Masculino</option>
+                                    <option value ="2">Femenino</option>
+                                {% else %}
+                                    {% if persona.0[5] == "Masculino" %}
+                                        <option value ="1" selected="true" >Masculino</option>
+                                        <option value ="2">Femenino</option>
+                                    {% else %}
+                                        <option value ="1" >Masculino</option>
+                                        <option value ="2" selected="true">Femenino</option>
+                                    {% endif %}
+
+                                {% endif %}
+                        </select>
+                        </div>
+                        </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/MantPersonas" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+        </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+
+function solonumeros(e)
+    {
+        var key = window.event ? e.which : e.keyCode;
+        if(key < 48 || key > 57)
+            e.preventDefault();
+    }
+
+    function validacedula(){
+        cedula = document.getElementById("cedula").value;
+        if(cedula.length == 10){
+            var impar = 0;
+            var par = 0;
+            
+            for (var i = 0; i < 9; i++) {
+                if(((i+1) % 2) == 0){
+                    par = Number(par) +  Number(cedula.charAt(i));
+                }
+                else{
+                    var num = (cedula.charAt(i) * 2).toString(); 
+                    if (num > 9){                        
+                        num =   Number(num.charAt(0)) +  Number(num.charAt(1));
+                        impar = Number(impar) + num;
+                    }
+                    else           
+                        impar = Number(impar) + ( Number(cedula.charAt(i)) * 2);
+                }
+            }
+            
+            var valiador = Number(par) + Number(impar);          
+            var decena = (Number(valiador.toString().charAt(0)) + 1) * 10;
+            if (cedula.charAt(i) != (Number(decena) - Number(valiador))){
+                 alert("Cédula Incorrecta");
+                $("#cedula").focus();
+                $("#cedula").val("");
+
+                 $('#reg_Personas').data('bootstrapValidator').resetForm(true);
+                // $('#reg_Personas').data('bootstrapValidator').resetField($("#cedula"),true);
+                
+                
+
+                return false;
+            }
+            return true;
+        }
+    }
+    
+    $(document).ready(function () {
+        $('#reg_Personas').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                cedula: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingresar la cédula'
+                    },
+                    stringLength: {
+                        min: 10,
+                        max: 10,
+                        message: 'Debe ingresar 10 dígitos'
+                    },
+                    callback:{
+                        callback:function(value, validator, field){
+                            return{
+                                valid:false,menssage:"error"
+                            }
+                        }
+                    } 
+                    }
+                },
+                apellidos: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingresar los apelidos'
+                    },
+                    stringLength: {
+                        min: 6,
+                        message: 'Por favor ingresar los apellidos'
+                    },
+                    }
+                },
+                nombres: {
+                    validators: {
+                        notEmpty: {
+                        message: 'Por favor ingresar los nombres'
+                    },
+                    stringLength: {
+                        min: 3,
+                        message: 'Por favor ingresar los nombres'
+                    },
+                    }
+                },                
+                fechaNacimiento: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor escojer la fecha de Ingreso'
+                        }
+                    }
+                },
+                tipoGenero: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor seleccionar el genero'
+                        }
+                    }
+                },                                                
+            }
+        })
+    });
+   
+
+
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Conjunto Residencial {% endblock %}
+
+{% block body %}
+<div class="container">
+    <h3>Mantenimiento de Recidencias</h3>
+        {% if session['TipoUsuSisfiab']|int() == 5 %}
+        <a href="/conjRecidencial/0" class="btn btn-success">Nuevo</a>
+        {% endif %}
+
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Ruc</td>
+                        <td>Nombre</td>
+                        <td>Télefono</td>
+                        <td>Web</td>
+                        <td>Logo</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for condominio in condominios %}
+                    <tr>
+                        <td> {{ condominio.1}}</td>
+                        <td> {{ condominio.2}}</td>
+                        <td> {{ condominio.5}}</td>
+                        <td> {{ condominio.6}}</td>
+                        <td> <img id="imgLogo" name="imgLogo" style="height:50px;" src="/static/Doc/logos/{{condominio.7}}"></td>
+                        <td>
+                            <!-- <a href="/conjRecidencial/{{condominio.0}}" class="btn btn-secundary btn-xs">Editar</a> -->
+                            <!-- {% if session['TipoUsuSisfiab']|int() == 5 %}
+                            <a href="/suspenderCondominio/{{condominio.0}}" class="btn btn-secundary btn-xs">Suspender </a>
+                            {% endif %} -->
+                            <!-- <a href="/MantDocumentos/{{ condominio.0}}" class="btn btn-success btn-xs">Documentos <span class="badge badge-light" ><b>{{ condominio.12}}</b></span></a>
+                            <a href="#" class="btn btn-success btn-sm">Directiva <span class="label label-primary" ><b>{{ condominio.12}}</b></span></a> -->
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-warning">Seleccionar la Acción</button>
+
+                                <button type="button" class="btn btn-success  dropdown-toggle"
+                                data-toggle="dropdown" >
+                                  <span class="caret"></span>
+                                  <span class="sr-only">Desplegar menú</span>
+                                </button>
+                              
+                                <ul class="dropdown-menu" role="menu">
+                                  <li><a href="/conjRecidencial/{{condominio.0}}" class="btn btn-secundary btn-sm">Editar</a></li>
+                                  {% if session['TipoUsuSisfiab']|int() == 5 %}
+                                  <li>
+                                    <a href="/suspenderCondominio/{{condominio.0}}" class="btn btn-secundary btn-sm">Suspender </a>
+                                  </li>
+                                  {% endif %}
+                                  <li class="divider"></li>
+                                 <li><a href="/MantDocumentos/{{ condominio.0}}" class="btn btn-success btn-sm">Documentos <span class="badge badge-light" ><b>{{ condominio.12}}</b></span></a></li>
+                                  <li><a href="#" class="btn btn-success btn-sm">Directiva <span class="badge badge-light" ><b>{{ condominio.12}}</b></span></a></li>
+                                  <li class="divider"></li>
+                                  <li><a href="/MantEtapas/{{ condominio.0}}" class="btn btn-success btn-sm">Etapas <span class="badge badge-light" ><b>{{ condominio.12}}</b></span></a></li>
+                                  <li><a href="/MantMultas/{{ condominio.0}}" class="btn btn-success btn-sm">Multas <span class="badge badge-light" ><b>{{ condominio.13}}</b></span></a></li>
+                                  <li><a href="/MantBancos/{{ condominio.0}}" class="btn btn-success btn-sm">Bancos <span class="badge badge-light" ><b>{{ condominio.14}}</b></span></a></li>
+                                </ul>
+                              </div>
+
+
+                            <!-- <span href="/MantEtapas/{{ condominio.0}}" class="btn btn-success btn-sm">Etapas <span class="label label-warning" ><b>{{ condominio.12}}</b></span></a> -->
+                            <!-- <span href="/MantMultas/{{ condominio.0}}" class="btn btn-success ">Multas <span class="label label-warning" ><b>{{ condominio.13}}</b></span></a> -->
+                            <!-- <span href="/MantBancos/{{ condominio.0}}" class="btn btn-success ">Bancos <span class="label label-warning" ><b>{{ condominio.14}}</b></span></a> -->
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+        </table>
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+           <!-- <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+</div>
+{% endblock %}

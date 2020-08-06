@@ -1,0 +1,119 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Alicuotas {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Generación de Alicuotas, Residencia : {{residencia.0[2]}} </h1>
+            <div class="card card-body">
+            <form method="POST" action="/addAlicuotas/{{residencia.0[0]}}" id="reg_genAlicuotas" name="reg_genAlicuotas" enctype="multipart/form-data" onsubmit="return validacion()">
+           
+                <table class="table table-striped table-bordered bg-white table-sm">
+                            <thead>
+                                <tr>
+                                    <td>Etapa</td>
+                                    <td>Gasto Etapa</td>
+                                    <td>Gasto Comunal</td>                        
+                                    <td>Nro Residencias</td>
+                                    <td>m²</td>
+                                    <td>Tipo Alicuota </td>
+                                    <td>Valor Alicuota</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                    {% for presupuesto in presupuestos %}
+                                    <tr>
+                                        <td> {{ presupuesto.3}}</td>
+                                        <td> {{ presupuesto.6}}</td>
+                                        <td> {{ presupuesto.7}}</td>
+                                        <td> {{ presupuesto.10}}</td> 
+                                        <td> {{ presupuesto.11}}</td> 
+                                        <td> {{ presupuesto.13}}</td> 
+                                        <td> {{ presupuesto.14}}</td>                                                             
+                                    </tr>
+                                    {% endfor %}
+                                
+                               
+                            </tbody>
+                </table>
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha última creación:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>                                            
+
+                                            <input type="text" name="fechamax" id="fechamax" class="form-control font-weight-bold" value={{fechamax}} disabled > 
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha Generación:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>                                            
+                                            <input type="date" name="fecha" id="fecha" class="form-control" >                                                                                                                                 
+
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>                    
+
+                    <button type="submit" class="btn btn-primary active">Generar</button>
+                    <a href="/Ingresos/{{residencia.0[0]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    // $(document).ready(function () {
+    //     $('#reg_genAlicuotas').bootstrapValidator({
+    //         // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+    //         feedbackIcons: {
+    //             valid: 'glyphicon glyphicon-ok',
+    //             invalid: 'glyphicon glyphicon-remove',
+    //             validating: 'glyphicon glyphicon-refresh'
+    //         },
+    //         fields: {
+    //             fecha: {
+    //                 validators: {
+    //                     notEmpty: {
+    //                     message: 'Por favor seleccionar la fecha'
+    //                 }
+    //                 }
+    //             },         
+    //         }
+    //     })
+    // });
+   
+
+    function validacion() {
+        valor = document.getElementById("fecha").value;
+        fechaviene = document.getElementById("fechamax").value;
+        if (fechaviene == 0)
+            return true;
+
+        if ( valor == null || valor.length == 0 || valor.replace("-","").substring(0, 6) <= fechaviene.substring(0,6)){
+            alert('La fecha tiene que ser mayor que ' + fechaviene.substring(0,4) + "/" + fechaviene.substring(4,6));
+            return false;
+        }
+        // alert(fechaviene.substring(0,4) +'-'+fechaviene.substring(4,6)+'-'+fechaviene.substring(6,8));
+        // var fecha = new Date(fechaviene.substring(0,4) +'-'+fechaviene.substring(4,6)+'-'+fechaviene.substring(6,8));
+        var fecha = new Date(fechaviene.substring(0,4),fechaviene.substring(4,6) ,10)
+        const mes = fecha.getMonth();
+        const anio = fecha.getFullYear();
+        var periodo = 0;
+        if ((mes+1).toString().length == 1)
+            periodo = anio.toString() + '0'+ (mes+1).toString();
+        else
+            periodo = anio.toString() + (mes+1).toString();
+
+        if(valor.replace("-","").substring(0, 6)> periodo){
+            alert('La fecha tiene que estar en: ' + periodo.substring(0,4) + "/" + periodo.substring(4,6));
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}

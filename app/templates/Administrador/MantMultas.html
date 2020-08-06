@@ -1,0 +1,39 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Mantenimiento Multas {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Mantenimiento de Multas, Residencia : {{ residencia.0[0]}} </h1>
+        <a href="/multas/{{ residencia.0[1]}}/0" class="btn btn-success">Nuevo</a>
+        <a href="/MantconjRecidencial" class="btn btn-success float-right">Regresar</a>
+        <table class="table table-striped table-bordered bg-white table-sm">
+                <thead>
+                    <tr>
+                        <td>Descripción</td>
+                        <td>Valor</td>
+                        <td>Porcentaje</td>
+                        <td>Estado</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for multa in Multas %}
+                    <tr>
+                        <td> {{ multa.2}}</td>
+                        <td> {{ multa.3}}</td>
+                        <td> {{ multa.4}}</td>
+                        <td> {{ multa.5}}</td>
+                        <td>                          
+                            {% if session['TipoUsuSisfiab'] >= 3 %}
+                            {% if multa.5 != "Suspendido"%}
+                                <a href="/multas/{{ residencia.0[1]}}/{{ multa.0}}" class="btn btn-secundary" >Editar</a>                            
+                                <a href="/suspenderMultas/{{multa.0}}/{{ residencia.0[1]}}" class="btn btn-secundary">Suspender</a>                           
+                            {%endif%}                           
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+        </table>
+</div>
+{% endblock %}

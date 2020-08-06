@@ -1,0 +1,226 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Ingresos {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Generación de Ingresos, Residencia : {{residencia.0[2]}} </h1>
+            <div class="card card-body">
+            <form method="POST" action="/addIngresos/{{residencia.0[0]}}" id="reg_genAlicuotas" name="reg_genAlicuotas" enctype="multipart/form-data" onsubmit="return validacion()">
+           
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Tipo de Ingreso:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                            <select id="tipo" name="tipo" class="form-control selectpicker" >
+                                                <option value="" >Seleccionar</option>                            
+                                                {% for tiposIngreso in tiposIngresos %} 
+                                                {% if tiposIngreso.1 != "Alicuota" %}                            
+                                                    <option value ="{{ tiposIngreso.0}}" > {{ tiposIngreso.1}} </option>                            
+                                                {%endif%}
+                                                {% endfor%}                         
+                                            </select>                                            
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>
+                    <div class="row" id="divSubtipomulta" hidden>
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Sub Tipo de Ingreso:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                            <select id="Subtipo" name="Subtipo" class="form-control selectpicker"  >
+                                                <option value="" >Seleccionar</option>                            
+                                                {% for multa in multas %} 
+                                     
+                                                    <option value ="{{ multa.0}} - {{ multa.2}} - {{ multa.3}}" > {{ multa.1}} </option>                            
+                      
+                                                {% endfor%}                         
+                                            </select>                                            
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>
+                    <div class="row" hidden id="divsubtipoalquiler">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Sub Tipo de Ingreso:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                            <select id="SubtipoAlquiler" name="SubtipoAlquiler" class="form-control selectpicker"  >
+                                                <option value="" >Seleccionar</option>                            
+                                                <!-- {% for multa in multas %} 
+                                     
+                                                    <option value ="{{ multa.0}}" > {{ multa.1}} </option>                            
+                      
+                                                {% endfor%}                          -->
+                                            </select>                                            
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>
+                    <div class="row" hidden id="divpropiedad" >
+                        <div class="col-md-8">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Propiedad / Residencia:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                            <select id="propiedad" name="propiedad" class="form-control selectpicker"  >
+                                                <option value="" >Seleccionar</option>                            
+                                                {% for propiedad in propiedades %} 
+                                     
+                                                    <option value ="{{ propiedad.0}} - {{ propiedad.1}} " > {{ propiedad.3}} - {{propiedad.4}} </option>                            
+                      
+                                                {% endfor%}                         
+                                            </select>                                            
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>
+                    
+                    <div class="row" >
+                    <div class="col-md-12">  
+                    <div class="form-group">
+                        <strong class="font-weight-bold" >Descripción :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="far fa-comment-alt"></i></span>
+
+                          <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción "></textarea>
+                                    
+                        </div> 
+                    </div>
+                    </div>
+                    </div>
+                    <div class="row" >
+                    <div class="col-md-3">
+                    <div class="form-group">
+                        <strong class="font-weight-bold" >Valor :</strong>
+                        <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                          <input  name="valor" id ="valor" placeholder="0" class="form-control"  type="number" value="0">                                                              
+                        </div> 
+                    </div>
+                    </div>
+                    </div>
+                                 
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha Generación:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>                                            
+                                            <input type="date" name="fecha" id="fecha" class="form-control" >                                                                                                                                 
+
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>                    
+
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/Ingresos/{{residencia.0[0]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+                </form>
+        </div>
+</div>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+  
+    $("#tipo").change(function(){
+        var valorselec =document.getElementById("tipo").value;
+        $.ajax({
+            // url: '/cargaTipoIngreso/' + 47 + '/' +valorselec,
+            type: 'GET',
+            success: function() {
+                document.getElementById("divsubtipoalquiler").hidden = true;
+                document.getElementById("divSubtipomulta").hidden = true;
+                document.getElementById("divpropiedad").hidden = true;
+                if(valorselec==3){
+		            document.getElementById("divSubtipomulta").hidden = false;                    
+                    document.getElementById("divsubtipoalquiler").hidden = true;
+                    document.getElementById("divpropiedad").hidden = false;
+                }
+                if(valorselec==2) {
+                    document.getElementById("divsubtipoalquiler").hidden = true;
+                    document.getElementById("divSubtipomulta").hidden = true;
+                    document.getElementById("divpropiedad").hidden = false;
+                }
+
+                if(valorselec==4 ) {
+                    document.getElementById("divsubtipoalquiler").hidden = true;
+                    document.getElementById("divSubtipomulta").hidden = true;
+                    document.getElementById("divpropiedad").hidden = true;
+                }
+
+                    
+	        },
+            // error: function() {
+            //     console.log("No se ha podido obtener la información");
+            // }
+           
+        });
+    });
+
+    $("#Subtipo").change(function(){
+        $.ajax({
+
+            type: 'GET',
+            success: function() {
+
+                var valorselec =document.getElementById("Subtipo").value;
+                var valor = valorselec.split("-")
+
+                if (parseInt(valor[2]) == 0 )
+                    document.getElementById("valor").value = valor[1] * 1;
+                else
+                    document.getElementById("valor").value = valor[1] * (valor[2] / 100);
+
+                                  
+	        },
+        });
+    });
+
+
+</script>
+
+<script>
+    function validacion() {
+
+        tipo = document.getElementById("tipo").value;
+        if ( tipo == "Seleccionar" || tipo == ""){
+            alert('Por favor seleccionar el tipo de Ingreso ');
+            return false;
+        }
+        if ( tipo == "3"){
+            subtipo = document.getElementById("Subtipo").value;
+            if ( subtipo == "Seleccionar" || subtipo == ""){
+                alert('Por favor seleccionar el Sub Tipo de Ingreso ');
+                return false;
+            }
+        }
+        if ( tipo == "2" || tipo == "3"){
+            propiedad = document.getElementById("propiedad").value;
+            if ( propiedad == "Seleccionar" || propiedad == ""){
+                alert('Por favor seleccionar la Propiedad');
+                return false;
+            }
+        }
+
+        descripcion =  document.getElementById("descripcion").value;
+        if ( descripcion == "" ){
+            alert('Por favor ingresar la descripción');
+            return false;
+        }
+
+        valor = document.getElementById("valor").value;
+        if ( valor == "" || valor == 0 ){
+            alert('Por favor ingresar el Valor');
+            return false;
+        }
+
+        fecha = document.getElementById("fecha").value;
+        if ( fecha == null || fecha.length == 0 ){
+            alert('Por favor ingresar la fecha');
+            return false;
+        }
+
+
+
+        return true;
+    }
+</script>
+{% endblock %}

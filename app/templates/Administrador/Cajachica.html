@@ -1,0 +1,138 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Caja Chica {% endblock %}
+
+{% block body %}
+<div class="container">
+        <h4>Caja Chica , Residencia : {{residencia.0[2]}}</h1>
+            <div class="card card-body">
+            <form method="POST" action="/addcajachica/{{residencia.0[0]}}" id="reg_gencajachica" name="reg_gencajachica" enctype="multipart/form-data" onsubmit="return validacion()">
+           
+                <table class="table table-striped table-bordered bg-white table-sm" id="tableReg" name ='tableReg'>
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    <td><strong class="font-weight-bold" >Nro Cobro</strong></td>
+                                    <td><strong class="font-weight-bold" >Tipo Cobro</strong></td>                     
+                                    <td><strong class="font-weight-bold" >Referencia</strong></td>
+                                    <td><strong class="font-weight-bold" >Valor</strong></td>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                    {% for cobro in cobros %}
+                                    <tr>
+                                        <td>
+                                              <input type="checkbox" name="ch{{loop.index}}" id="ch{{loop.index}}" onclick="calcular()">                                 
+                                        </td>
+                                        <td> {{ cobro.0}}
+                                            <input type="text"  name="I{{loop.index}}" value= {{cobro.0}} hidden>
+                                        </td>
+                                        <td> {{ cobro.2}}</td>
+                                        <td> {{ cobro.3}}</td> 
+                                        <td> {{ cobro.4}}
+                                            <input type="number" step="0.01" class="form-control" placeholder="0.00" name="vv{{loop.index}}" id="vv{{loop.index}}" value={{cobro.4}} hidden  >
+                                        </td>
+                                                           
+                                    </tr>
+                                    {% endfor %}                               
+                            </tbody>
+                </table>
+                    <div class="row">
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Total Deposito:</strong>                          
+                                        <div class="input-group" name="valor1" id="valor1" > <span class="input-group-addon">$</span>                                         
+
+                                            <input type="text" name="valor" id="valor" class="form-control font-weight-bold" value="0" readonly> 
+                                        </div> 
+                                </div>
+                        </div>        
+                 
+                        <div class="col-md-3">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Fecha pago:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="fas fa-calendar-alt"></i></span>                                            
+                                            <input type="date" name="fecha" id="fecha" class="form-control" >                                                                                                                                 
+
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>                    
+                    <div class="row">
+                        <div class="col-md-3" name="divbanco" id="divbanco" >
+                            <div class="form-group">
+                                    <strong class="font-weight-bold" >banco:</strong>                          
+                                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>                                            
+                                        <select id="banco" name="banco" class="form-control selectpicker"  >
+                                            <option value="" >Seleccionar</option>                            
+                                            {% for banco in bancos %}                                           
+                                                <option value ="{{ banco.0}}" selected > {{ banco.1}} - {{ banco.2}} </option>
+                                            {% endfor%}                         
+                                        </select>                                                                                                                               
+                                    </div> 
+                            </div>
+                        </div>                            
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                                <div class="form-group">
+                                        <strong class="font-weight-bold" >Referencia de la Caja Chica:</strong>                          
+                                        <div class="input-group"> <span class="input-group-addon"><i class="far fa-comment-alt"></i></span>                                            
+                                            <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Referencia de la Caja Chica"></textarea>
+                                        </div> 
+                                </div>
+                        </div>        
+                    </div>                    
+                    <button type="submit" class="btn btn-primary active">Grabar</button>
+                    <a href="/Ingresos/{{residencia.0[0]}}" class="btn btn-secondary">Cancelar</a>                                                                  
+            </form>
+        </div>
+</div>
+<!-- <script src="//code.jquery.com/jquery-1.10.2.js"></script> -->
+<script type="text/javascript">
+  
+    function calcular(){    
+               var val = 0;
+               document.getElementById('valor').value = 0;
+               for (var j = 1; j < tableReg.rows.length; j++) {
+                    var ddd = document.getElementById('ch'+j).checked;
+                    
+                    if (ddd == true){
+                        val = val + parseFloat(document.getElementById('vv'+ (j)).value);
+                        document.getElementById('valor').value = val;
+                
+                    }     
+
+               }                        
+        }
+
+    function validacion() {
+        valor = document.getElementById("valor").value;
+        if(valor == null || valor.length == 0 ||valor == 0 ){
+            alert('Por favor ingresar el valor');
+            return false;
+        } 
+        fecha = document.getElementById("fecha").value;
+        if ( fecha == null || fecha.length == 0 ){
+            alert('Por favor seleccionar la fecha');
+            return false;
+        }
+
+        banco = document.getElementById("banco").value;
+        if(banco == null || banco.length == 0  ){
+            alert('Por favor seleccionar el Banco');
+            return false;
+        }         
+         
+        descripcion = document.getElementById("descripcion").value;
+        if(descripcion == null || descripcion.length == 0 || descripcion == ""){
+            alert('Por favor ingresar la referencia');
+            return false;
+        }
+
+        return true;
+    }
+</script>
+{% endblock %}

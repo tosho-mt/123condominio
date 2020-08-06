@@ -1,0 +1,154 @@
+{% extends 'Inicio.html' %}
+
+{% block title %} Nueva Tarifa {% endblock %}
+
+{% block body %}
+<div class="col-md-4 offset-md-4">
+        <div class="card card-body">
+            <form action="/add-tarifa" method="POST" id="reg_form">
+                <div class="form-group">        
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre Tarifa">
+                    </div>                               
+                </div>
+                <div class="form-group">
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                        <textarea class="form-control" id="descripcion" name="descripcion" placeholder="Descripción de la Tarifa"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                        <select id="tipoTarifa" name="tipoTarifa" class="form-control selectpicker" >
+                                <option value=" " >Seleccionar</option>
+                                <option>1 - Caracteristica</option>
+                                <option>1 - Administración</option>
+                                <option>1 - Residentes</option>
+                                <option>1 - Directorio</option>
+                                <option>1 - Seguridad</option>
+                        </select>
+                    </div>
+                </div>                
+                <div class="form-group">
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                        <input type="text" class="form-control" id="planInicial" name="planInicial" placeholder="Valor plan Inicial">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                        <input type="text" class="form-control" id="planBasico" name="planBasico" placeholder="Valor plan Basico">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                        <input type="text" class="form-control" id="planIntermedio" name="planIntermedio" placeholder="Valor plan Intermedio">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group"> <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+                        <input type="text" class="form-control" id="planSuperior" name="planSuperior" placeholder="Valor plan Superior">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-send"></span> Ingresar</button>
+                    <a href="/tarifas" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+</div>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#reg_form').bootstrapValidator({
+            // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                nombre: {
+                    validators: {
+                        stringLength: {
+                        min: 5,
+                        max: 100,
+                        message: 'Por favor, el Nombre de la Tarifa debe estar entre 10 y 100 caracteres'
+                        },
+                        notEmpty: {
+                            message: 'Por favor ingrese el Nombre de la Tarifa'
+                        },
+                    }
+                },
+                descripcion: {
+                    validators: {
+                        stringLength: {
+                        min: 10,
+                        max: 200,
+                        message:'La descripción de la tarifa debe estar entre 10 y 200 caracteres'
+                        },
+                        notEmpty: {
+                            message: 'Por favor ingrese la Descripción de la tarifa'
+                        }
+                    }
+                },
+                tipoTarifa: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Por favor seleccionar el tipo de tarifa'
+                        }
+                    }
+                },
+                planInicial: {
+                    validators: {
+                        stringLength: {
+                        min: 1,
+                        max: 50,
+                        message:'El valor del plan inicial debe estar entre 1 y 50 caracteres'
+                        },
+                        notEmpty: {
+                            message: 'Por favor ingrese el valor del plan inicial'
+                        }
+                    }
+                },
+                planBasico: {
+                    validators: {
+                        stringLength: {
+                        min: 1,
+                        max: 50,
+                        message:'El valor del plan basico debe estar entre 1 y 50 caracteres'
+                        },
+                        notEmpty: {
+                            message: 'Por favor ingrese el valor del plan basico'
+                        }
+                    }
+                },
+                planIntermedio: {
+                    validators: {
+                        stringLength: {
+                        min: 1,
+                        max: 50,
+                        message:'El valor del plan Intermedio debe estar entre 1 y 50 caracteres'
+                        },
+                        notEmpty: {
+                            message: 'Por favor ingrese el valor del plan Intermedio'
+                        }
+                    }
+                },
+                planSuperior: {
+                    validators: {
+                        stringLength: {
+                        min: 1,
+                        max: 50,
+                        message:'El valor del plan Superior debe estar entre 1 y 50 caracteres'
+                        },
+                        notEmpty: {
+                            message: 'Por favor ingrese el valor del plan Superior'
+                        }
+                    }
+                },                                              
+            }
+        })
+  
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,365 @@
+from flask import Flask, render_template, request, json, redirect, url_for, flash, session,escape, send_from_directory,g,abort
+from flaskext.mysql import MySQL
+from werkzeug.security import generate_password_hash, check_password_hash #encryptar
+from datetime import datetime
+import requests
+import sys # captura errores
+import os #ruta absoluta para subir archivos 
+
+#variable para subir logos
+UNPLOAD_FOLDER = os.path.abspath("./static/Doc/logos")
+UNPLOAD_FOLDERDoc = os.path.abspath("./static/Doc/Documentos")
+
+fechacompleta = datetime.now()
+fecha = fechacompleta.strftime("%d-%m-%Y") 
+fechaNum = fechacompleta.strftime("%Y%m%d") 
+hora =  fechacompleta.strftime("%H:%M:%S") 
+
+app = Flask(__name__)
+
+app.config['MYSQL_DATABASE_HOST']='localhost'
+app.config['MYSQL_DATABASE_USER']='root'
+app.config['MYSQL_DATABASE_PASSWORD']='SisFiab'
+app.config['MYSQL_DATABASE_DB']='condominio'
+
+#configuracion del directorio donde se guardaran los logos
+app.config['UPLOAD_FOLDER'] = UNPLOAD_FOLDER
+app.config['UPLOAD_FOLDERDoc'] = UNPLOAD_FOLDERDoc
+
+mysql = MySQL()
+mysql.init_app(app)
+
+#settings para configurar las sesiones y poder modificar si fuera el caso
+app.secret_key='MtSisFiabAlex'
+
+#variables globales 
+@app.before_request # se ejecuta al inicio decorador
+def before_request():
+        if 'nameSisfiab' in session:
+                g.nameSisfiab = session['emailSisfiab']
+                g.emailSisfiab = session['emailSisfiab']
+                g.idUsuSisfiab = session['idUsuSisfiab']
+                g.TipoUsuSisfiab = session['TipoUsuSisfiab']
+        else:
+                g.nameSisfiab = None
+                g.emailSisfiab = None
+                g.idUsuSisfiab = None
+                g.TipoUsuSisfiab = None 
+
+
+#controlar errores tutas no existentes y mas
+@app.errorhandler(404)
+def page_not_found(err):
+        return render_template("page_not_found.html"),404
+
+# error para controlar permisos
+@app.errorhandler(500)
+def forbidden(err):
+        return render_template("page_not_found.html"),500
+
+
+@app.route('/')
+def home():
+        return render_template("home.html")
+
+@app.route('/tarifas')
+def tarifas():
+        try:
+                data = consTabla('select * from tarifas1 where estado = "Activo" order by idtarifas')
+                return render_template("tarifas.html",tarifas=data)
+        except Exception as e:
+                flash(e)
+                return redirect(url_for('tarifas'))
+
+@app.route('/nuevaTarifa',methods=["GET","POST"])
+def nuevaTarifa():
+        try:
+                if g.nameSisfiab:
+                        return render_template('/nuevaTarifa.html')
+                else: 
+                        return render_template('/login.html')
+        except Exception as e:
+                flash(e)
+                return redirect(url_for('nuevaTarifa'))
+               
+
+@app.route('/add-tarifa',methods=['POST'])
+def add_tarifa():
+        try:
+                if request.method == 'POST':
+                        nombre = request.form['nombre'] 
+                        descripcion = request.form['descripcion']   
+                        tipoTarifa = request.form['tipoTarifa'] 
+                        planInicial = request.form['planInicial'] 
+                        planBasico = request.form['planBasico'] 
+                        planIntermedio = request.form['planIntermedio'] 
+                        planSuperior = request.form['planSuperior']       
+                        data = consInsTabla('INSERT INTO tarifas (NombreTarifa,PlanInicial, PlanBasico, PlanIntermedio, PlanSuperior, TipoTarifa, Descripcion,Estado, FechaMod, UsuarioMod) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',[nombre,planInicial,planBasico,planIntermedio,planSuperior,tipoTarifa,descripcion,'Activo',fechaNum,session['idUsuSisfiab']])
+                        if len(data) is 0:
+                                flash('proceso ok')
+        
+                        return redirect(url_for('tarifas'))
+        except Exception as e:
+                flash(e)
+                return redirect(url_for('nuevaTarifa'))
+
+@app.route('/elimina-tarifas/<id>')
+def elimina_tarifas(id):
+        try:
+                consUpdTabla('update tarifas set estado ="Eliminado",FechaMod=%s,UsuarioMod=%s where idTarifas =%s', [fechaNum,session['idUsuSisfiab'],id])
+                flash('Eliminado')
+                return redirect(url_for('tarifas'))
+        except Exception as e:
+                flash(e)
+                return redirect(url_for('tarifas'))
+
+
+#registro usuarios web
+@app.route('/registrar', methods=["GET", "POST"])
+def registrar():
+        try:
+                if g.nameSisfiab:
+                        return render_template('home.html')
+                else:       
+                        if request.method == 'GET':
+                                return render_template("register.html")
+                        else:
+                                nombre = request.form['nombre']
+                                email = request.form['email']
+                                celular = request.form['celular']
+                                password = generate_password_hash( request.form['clave'].encode('utf-8'),method="sha256")
+                                consInsTabla('INSERT INTO usuarios (Nombre, Email, Clave, TipoUsuario, Estado, fechaing, CodCondominio, celular,usuarioIng,UsuarioMod) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',[nombre,email,password,'1','Activo',fechaNum,0,celular,7,0])
+                                user = consTablaPara("SELECT * FROM usuarios WHERE email=%s ",email)
+                                session['nameSisfiab'] = user[0][1]
+                                session['emailSisfiab'] = user[0][2]
+                                session['idUsuSisfiab'] = user[0][0]
+                                session['TipoUsuSisfiab'] = user[0][4]
+                                return redirect(url_for('home'))
+        except Exception as e:
+                flash(e)
+                return render_template('register.html')
+
+@app.route('/login',methods=["GET","POST"])
+def login():
+        try:                        
+                if g.nameSisfiab:
+                        return render_template('home.html')
+                else:
+                        if request.method == 'POST':
+                                email = request.form['email']
+                                user = consTablaPara("SELECT * FROM usuarios WHERE email=%s ",email)
+                                if user and check_password_hash(user[0][3],request.form['password'].encode('utf-8')):
+                                        session['nameSisfiab'] = user[0][1]
+                                        session['emailSisfiab'] = user[0][2]
+                                        session['idUsuSisfiab'] = user[0][0]
+                                        session['TipoUsuSisfiab'] = user[0][4]
+                                        return render_template('home.html')
+                                else:
+                                        flash('Usuario o clave incorrectos')
+                                        return render_template('login.html')
+                        else:
+                                return render_template('login.html')
+        except Exception as e:
+                flash(e)
+                return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    session.pop('nameSisfiab',None)
+    session.pop('emailSisfiab',None)
+    session.pop('idUsuSisfiab',None)
+    session.pop('TipoUsuSisfiab',None)
+    return render_template("home.html")
+
+#Conjunto recidenial
+@app.route('/MantconjRecidencial')
+def mant_conj_residencial():
+        try:
+                if g.nameSisfiab:
+                        if int(g.TipoUsuSisfiab) >= 3:
+                                data = consTabla('select * from condominio where estado = "Activo"')
+                                return render_template("/Administrador/MantConjResid.html",condominios=data)
+                        else:
+                                return render_template('home.html')
+                else:
+                        return render_template('login.html')       
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/MantConjResid.html')
+
+@app.route('/conjRecidencial/<id>')
+def conj_residencial(id):
+        try:
+                if g.nameSisfiab:
+                        if int(g.TipoUsuSisfiab) >= 3:                       
+                                if id == "0":
+                                        return render_template("/Administrador/ConjResidencial.html",condominio="0")
+                                else:
+                                        data=  consTablaPara('select * from condominio where estado = "Activo" and idCondominio = %s' ,[id])
+                                        return render_template("/Administrador/ConjResidencial.html",condominio=data[0])                        
+                        else:
+                                return render_template("/Inicio.html")
+                else:
+                        return render_template('login.html')       
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/ConjResidencial.html')
+
+@app.route('/addConjRecidencial/<string:id>',methods=['POST'])
+def add_conj_residencial(id):
+        try:
+                if request.method == 'POST':                        
+                        nombre = request.form['nombre']
+                        coords = request.form['coords']
+                        coords = coords[1:-1].split(',')
+                        latitud = coords[0]
+                        longitud = coords[1]
+                        telefono = request.form['telefono']
+                        #cargar el archivo en el directorio
+                        f =  request.files["logo"] 
+                        #print(f.value)                               
+                        if f:
+                                filename = f.filename                                
+                                f.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))                                
+                        else:
+                                filename = ""
+                        imgAnt = request.form['logoh']
+                        if filename == "":
+                                filename = imgAnt
+
+                        paginaweb = request.form['paginaweb']
+                        
+                        if id == "0":
+                                ruc = request.form['ruc']
+                                consInsTabla('INSERT INTO condominio (Ruc,Nombre, latitud, longitud, telefono, Paginaweb,logo,Estado, fechamod, UsuarioMod,fechaing) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',[ruc,nombre,latitud, longitud,telefono, paginaweb,filename,'Activo',fechaNum ,session['idUsuSisfiab'],fechaNum])
+                        else:        
+                                consUpdTabla('UPDATE condominio set Nombre=%s, latitud=%s, longitud=%s, telefono=%s, Paginaweb=%s,logo=%s, fechamod=%s, UsuarioMod=%s where idcondominio=%s',[nombre,latitud, longitud,telefono, paginaweb,filename,fechaNum ,session['idUsuSisfiab'],id])
+                        return redirect(url_for('mant_conj_residencial'))
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/ConjResidencial.html')
+
+@app.route('/suspenderCondominio/<string:id>',methods=['GET'])
+def suspenderCondominio(id):
+        try:
+                if request.method == 'GET':
+                        consUpdTabla('UPDATE condominio set estado="Suspendido", fechamod=%s, UsuarioMod=%s where idcondominio=%s',[fechaNum ,session['idUsuSisfiab'],id])
+                        return redirect(url_for('mant_conj_residencial'))
+
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/MantConjResid.html')
+
+
+#Documentos
+@app.route('/MantDocumentos/<string:id>')
+def MantDocumentos(id):
+        try:
+                if g.nameSisfiab:
+                        if int(g.TipoUsuSisfiab) >= 3:
+                                sql = 'select *,(select valor from parametros where estado = "Activo" and coddefinicion = "TipoDocumento" and codigo = tipodocumento)  from Documentos where estado = "Activo" and idcondominio = %s order by tipodocumento, numero'
+                                data = consTablaPara(sql,[id])
+                                sql = 'select nombre,idcondominio from condominio where condominio.idcondominio = %s'
+                                residencia = consTablaPara(sql,[id])
+                                return render_template("/Administrador/MantDocumentos.html",documentos=data,residencia=residencia)
+                        else:
+                                return render_template('Inicio.html')
+                else:
+                        return render_template('login.html')       
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/MantDocumentos.html')
+
+@app.route('/documentos/<id>')
+def documentos(id):
+        try:
+                if g.nameSisfiab:
+                        if int(g.TipoUsuSisfiab) >= 3:
+                                vid = id.split('-')
+                                tipodocs = consTabla('select codigo,valor from parametros where estado = "Activo" and coddefinicion = "TipoDocumento" and codigo > 0 order by codigo')
+                                sql = 'select nombre,idcondominio from condominio where condominio.idcondominio = %s'
+                                residencia = consTablaPara(sql,[vid[0]])
+                                if vid[1] == "0":
+                                        return render_template("/Administrador/documentos.html",documento=vid[1],conjunto=residencia,tipodocs = tipodocs)
+                                else:
+                                        data=  consTablaPara('select * from Documentos where estado = "Activo" and idDocumento = %s' ,[vid[1]])
+                                        return render_template("/Administrador/documentos.html",documento=data,conjunto=residencia,tipodocs = tipodocs)                        
+                        else:
+                              return render_template('Inicio.html')  
+                else:
+                        return render_template('login.html')       
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/documentos.html')
+
+@app.route('/addDocumentos/<string:id>',methods=['POST'])
+def addDocumentos(id):
+        try:
+                if request.method == 'POST':  
+                        vId = id.split('-')                   
+                        tipoDocumento = request.form['tipoDocumento']
+                        print(tipoDocumento)
+                        nrodoc = request.form['nrodoc']
+                        print(nrodoc)
+                        comentario = request.form['comentario']
+                        print(comentario)
+                        #cargar el archivo en el directorio
+                        f =  request.files["logo"]                             
+                        if f:
+                                filename = f.filename                                
+                                f.save(os.path.join(app.config['UPLOAD_FOLDERDoc'],filename))                         
+                        else:
+                                filename = ""
+                        print(filename)
+                        doch = request.form['doch']
+                        if filename == "":
+                                filename = doch
+                        print(filename)
+                        seguridad = request.form['seguridad']
+                        
+                        if vId[1] == "0":
+                                consInsTabla('INSERT INTO documentos (idcondominio,tipodocumento, numero,comentario,fechacarga, documento,estado,nivelseguridad,fechamod, UsuarioMod) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',[vId[0],tipoDocumento,nrodoc, comentario,fechaNum, filename,'Activo',seguridad,fechaNum ,session['idUsuSisfiab']])
+                        else:    
+                                print('Temporal hasta el update') 
+                                #consUpdTabla('UPDATE documentos set Nombre=%s, latitud=%s, longitud=%s, telefono=%s, Paginaweb=%s,logo=%s, fechamod=%s, UsuarioMod=%s where idcondominio=%s',[nombre,latitud, longitud,telefono, paginaweb,filename,fechaNum ,session['idUsuSisfiab'],vId[1]])
+                        return redirect(url_for('MantDocumentos',id=vId[0]))
+        except Exception as e:
+                flash(e)
+                return render_template('/Administrador/Documentos.html')
+
+
+# funciones
+def consTablaPara(sql,parametros):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(sql,(parametros))
+        data = cursor.fetchall()
+        cursor.close()
+        return data
+
+def consTabla(sql):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        cursor.close()
+        return data
+
+def consInsTabla(sql,parametros):   
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(sql ,(parametros))
+        conn.commit()
+        return 'ok'
+
+def consUpdTabla(sql,parametros):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute(sql,(parametros))
+        conn.commit()
+        return 'ok'
+
+
+if __name__ == '__main__':
+    app.run(port = 3000,debug=True)
